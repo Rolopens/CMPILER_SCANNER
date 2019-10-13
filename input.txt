@@ -1,7 +1,7 @@
-public class Driver {
+pub cla Driver {
 
-    public static void main(String[] args){
-        int x = 2;
+    pub sta voi main(str[] args){
+        dec x = 2;
     }
     Ñ
 }

@@ -2,41 +2,43 @@ lexer grammar SHJava;
 // Lexer Rules
 
 // KEYWORDS
-KEYWORD: ABSTRACT | ASSERT | BOOLEAN | BREAK | CASE | CHAR | CLASS | CONST | DEFAULT | DO | ELSE | ENUM | EXTENDS | FINAL | FLOAT | FOR | IF | IMPLEMENTS | INSTANCEOF | INT | INTERFACE | NEW | PRIVATE | PRINT | PROTECTED | PUBLIC | RETURN | SCAN | STATIC | SUPER | SWITCH | THIS | VOID | WHILE;
+KEYWORD: ABSTRACT | ASSERT | BOOLEAN | BREAK | CASE | CHAR | CLASS | CONST | DEFAULT | DO | ELSE | ENUM | EXTENDS | FINAL | FLOAT | FOR | IF | IMPLEMENTS | INSTANCEOF | INT | INTERFACE | NEW | NULL | PRIVATE | PRINT | PROTECTED | PUBLIC | RETURN | SCAN | STATIC | STRING | SUPER | SWITCH | THIS | VOID | WHILE;
 ABSTRACT:           'abs';
 ASSERT:             'ass';
-BOOLEAN:            'bool';
+BOOLEAN:            'boo';
 BREAK:              'brk';
-CASE:               'case';
-CHAR:               'char';
-CLASS:              'class';
-CONST:              'const';
+CASE:               'cas';
+CHAR:               'cha';
+CLASS:              'cla';
+CONST:              'con';
 DEFAULT:            'def';
-DO:                 'do';
-ELSE:               'else';
-ENUM:               'enum';
+DO:                 'ddo';
+ELSE:               'els';
+ENUM:               'enu';
 EXTENDS:            'ext';
 FINAL:              'fin';
-FLOAT:              'float';
-FOR:                'for';
-IF:                 'if';
-IMPLEMENTS:         'imple';
+FLOAT:              'flo';
+FOR:                'dur';
+IF:                 'iif';
+IMPLEMENTS:         'imp';
 INSTANCEOF:         'iof';
-INT:                'int';
-INTERFACE:          'iface';
-NEW:                'new';
-PRIVATE:            'priv';
+INT:                'dec';
+INTERFACE:          'ifa';
+NEW:                'cre';
+NULL:               'nul';
+PRIVATE:            'pri';
 PRINT:		        'out';
-PROTECTED:          'prot';
+PROTECTED:          'pro';
 PUBLIC:             'pub';
 RETURN:             'ret';
 SCAN:		        'inp';
-STATIC:             'stat';
-SUPER:              'spr';
-SWITCH:             'switch';
-THIS:               'this';
-VOID:               'void';
-WHILE:              'while';
+STATIC:             'sta';
+STRING:             'str';
+SUPER:              'sup';
+SWITCH:             'swi';
+THIS:               'thi';
+VOID:               'voi';
+WHILE:              'whi';
 
 //LITERALS
 DECIMAL_LITERAL
