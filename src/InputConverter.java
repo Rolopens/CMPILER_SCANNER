@@ -1,6 +1,5 @@
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,18 +17,22 @@ public class InputConverter {
     }
 
     public void displayTokenClass(List<CharStream> inputs){
+            unrecognizedTokens = new ArrayList<>();
 
-        unrecognizedTokens = new ArrayList<>();
+            for (int i = 0; i < inputs.size(); i++) {
+                try {
+                    SHJava lexer = new SHJava(inputs.get(i));
+                    lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
+                    Token token = lexer.nextToken();
 
-        for(int i = 0; i < inputs.size(); i++){
-            SHJava lexer = new SHJava(inputs.get(i));
-            Token token = lexer.nextToken();
-
-            while (token.getType() != SHJava.EOF) {
-                System.out.println(getTokenType(token) + ": " + token.getText());
-                token = lexer.nextToken();
+                    while (token.getType() != SHJava.EOF) {
+                        System.out.println(getTokenType(token) + ": " + token.getText());
+                        token = lexer.nextToken();
+                    }
+                }catch(ParseCancellationException e){
+                    System.out.println("Could not recognize: "+ inputs.get(i));
+                }
             }
-        }
     }
 
     private String getTokenType(Token token) {
@@ -58,5 +61,16 @@ public class InputConverter {
                 unrecognizedTokens.add(token);
                 return "Could not recognize: ";
         }
+    }
+}
+
+class ThrowingErrorListener extends BaseErrorListener {
+
+    public static final ThrowingErrorListener INSTANCE = new ThrowingErrorListener();
+
+    @Override
+    public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e)
+            throws ParseCancellationException {
+        throw new ParseCancellationException("line " + line + ":" + charPositionInLine + " " + msg);
     }
 }
