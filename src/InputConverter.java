@@ -58,6 +58,8 @@ public class InputConverter {
                 return "STRING_LITERAL";
             case SHJava.NULL_LITERAL:
                 return "NULL_LITERAL";
+            case SHJava.COMMENT:
+                return "COMMENT";
             default:
                 unrecognizedTokens.add(token);
                 return "Could not recognize: ";
