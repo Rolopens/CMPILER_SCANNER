@@ -7,6 +7,8 @@ import java.util.List;
 
 public class InputConverter {
 
+    ArrayList<Token> unrecognizedTokens = null;
+
     public ArrayList<CharStream> convertInputs(List<String> inputs){
         ArrayList<CharStream> charStreams = new ArrayList<>();
         for (int i = 0; i<inputs.size(); i++){
@@ -16,19 +18,22 @@ public class InputConverter {
     }
 
     public void displayTokenClass(List<CharStream> inputs){
+
+        unrecognizedTokens = new ArrayList<>();
+
         for(int i = 0; i < inputs.size(); i++){
             SHJava lexer = new SHJava(inputs.get(i));
             Token token = lexer.nextToken();
 
             while (token.getType() != SHJava.EOF) {
-                System.out.println(getTokenType(token.getType()) + ": " + token.getText());
+                System.out.println(getTokenType(token) + ": " + token.getText());
                 token = lexer.nextToken();
             }
         }
     }
 
-    private String getTokenType(int tokenType) {
-        switch (tokenType) {
+    private String getTokenType(Token token) {
+        switch (token.getType()) {
             case SHJava.KEYWORD:
                 return "KEYWORD";
             case SHJava.SEPARATOR:
@@ -50,8 +55,8 @@ public class InputConverter {
             case SHJava.NULL_LITERAL:
                 return "NULL_LITERAL";
             default:
-                System.out.println(tokenType);
-                return "OTHER";
+                unrecognizedTokens.add(token);
+                return "Could not recognize: ";
         }
     }
 }
