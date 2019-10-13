@@ -22,7 +22,8 @@ public class InputConverter {
             for (int i = 0; i < inputs.size(); i++) {
                 try {
                     SHJava lexer = new SHJava(inputs.get(i));
-                    lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
+                    lexer.removeErrorListeners();
+                    lexer.addErrorListener(CustomErrorListener.INSTANCE);
                     Token token = lexer.nextToken();
 
                     while (token.getType() != SHJava.EOF) {
@@ -30,7 +31,7 @@ public class InputConverter {
                         token = lexer.nextToken();
                     }
                 }catch(ParseCancellationException e){
-                    System.out.println("Could not recognize: "+ inputs.get(i));
+                    System.out.println("[NO CLASS] COULD NOT RECOGNIZE: "+ inputs.get(i));
                 }
             }
     }
@@ -64,13 +65,13 @@ public class InputConverter {
     }
 }
 
-class ThrowingErrorListener extends BaseErrorListener {
+class CustomErrorListener extends BaseErrorListener {
 
-    public static final ThrowingErrorListener INSTANCE = new ThrowingErrorListener();
+    public static final CustomErrorListener INSTANCE = new CustomErrorListener();
 
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e)
             throws ParseCancellationException {
-        throw new ParseCancellationException("line " + line + ":" + charPositionInLine + " " + msg);
+        throw new ParseCancellationException();
     }
 }
