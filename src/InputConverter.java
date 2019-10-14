@@ -6,34 +6,55 @@ import java.util.List;
 
 public class InputConverter {
 
-    ArrayList<Token> unrecognizedTokens = null;
+    ArrayList<String> unrecognizedTokens = new ArrayList<>();
 
-    public ArrayList<CharStream> convertInputs(List<String> inputs){
-        ArrayList<CharStream> charStreams = new ArrayList<>();
-        for (int i = 0; i<inputs.size(); i++){
-            charStreams.add(CharStreams.fromString(inputs.get(i)));
-        }
-        return charStreams;
-    }
+    //Legacy Code
+//    public ArrayList<CharStream> convertInputs(List<String> inputs){
+//        ArrayList<CharStream> charStreams = new ArrayList<>();
+//        for (int i = 0; i<inputs.size(); i++){
+//            charStreams.add(CharStreams.fromString(inputs.get(i)));
+//        }
+//        return charStreams;
+//    }
+//
+//    public void displayTokenClass(List<CharStream> inputs){
+//            unrecognizedTokens = new ArrayList<>();
+//
+//            for (int i = 0; i < inputs.size(); i++) {
+//                try {
+//                    SHJava lexer = new SHJava(inputs.get(i));
+//                    lexer.removeErrorListeners();
+//                    lexer.addErrorListener(CustomErrorListener.INSTANCE);
+//                    Token token = lexer.nextToken();
+//
+//                    while (token.getType() != SHJava.EOF) {
+//                        System.out.println(getTokenType(token) + ": " + token.getText());
+//                        token = lexer.nextToken();
+//                    }
+//                }catch(ParseCancellationException e){
+//                    System.out.println("[NO CLASS] COULD NOT RECOGNIZE: "+ inputs.get(i));
+//                }
+//            }
+//    }
 
-    public void displayTokenClass(List<CharStream> inputs){
-            unrecognizedTokens = new ArrayList<>();
+    public void displayTokenClass(CharStream input){
+            SHJava lexer = new SHJava(input);
+            Token token = lexer.nextToken();
 
-            for (int i = 0; i < inputs.size(); i++) {
-                try {
-                    SHJava lexer = new SHJava(inputs.get(i));
-                    lexer.removeErrorListeners();
-                    lexer.addErrorListener(CustomErrorListener.INSTANCE);
-                    Token token = lexer.nextToken();
-
-                    while (token.getType() != SHJava.EOF) {
-                        System.out.println(getTokenType(token) + ": " + token.getText());
-                        token = lexer.nextToken();
-                    }
-                }catch(ParseCancellationException e){
-                    System.out.println("[NO CLASS] COULD NOT RECOGNIZE: "+ inputs.get(i));
+            System.out.println("RECOGNIZED TOKENS");
+            while (token.getType() != SHJava.EOF) {
+                if(token.getType() != SHJava.WS && token.getType() != SHJava.INVALIDCHAR_LITERAL && token.getType() != SHJava.UnknownToken){
+                    System.out.println(getTokenType(token) + ": " + token.getText());
                 }
+                if(token.getType() == SHJava.INVALIDCHAR_LITERAL || token.getType() == SHJava.UnknownToken){
+                    unrecognizedTokens.add(token.getText());
+                }
+                token = lexer.nextToken();
             }
+
+            System.out.println("\nUNRECOGNIZED TOKENS");
+            printAllUnrecognizedTokens();
+
     }
 
     private String getTokenType(Token token) {
@@ -60,20 +81,33 @@ public class InputConverter {
                 return "NULL_LITERAL";
             case SHJava.COMMENT:
                 return "COMMENT";
+            case SHJava.UnknownToken:
+                unrecognizedTokens.add(token.getText());
+                return "NO TOKEN CLASS: ";
+            case SHJava.INVALIDCHAR_LITERAL:
+                unrecognizedTokens.add(token.getText());
+                return "NO TOKEN CLASS";
             default:
-                unrecognizedTokens.add(token);
-                return "Could not recognize: ";
+                return "ERROR";
+        }
+    }
+
+    public void printAllUnrecognizedTokens(){
+        for (int i = 0; i < unrecognizedTokens.size(); i++){
+            System.out.println("Token " + i + ": " + unrecognizedTokens.get(i));
         }
     }
 }
 
-class CustomErrorListener extends BaseErrorListener {
 
-    public static final CustomErrorListener INSTANCE = new CustomErrorListener();
-
-    @Override
-    public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e)
-            throws ParseCancellationException {
-        throw new ParseCancellationException();
-    }
-}
+//Legacy Code
+//class CustomErrorListener extends BaseErrorListener {
+//
+//    public static final CustomErrorListener INSTANCE = new CustomErrorListener();
+//
+//    @Override
+//    public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e)
+//            throws ParseCancellationException {
+//        throw new ParseCancellationException("NO CLASS: " + msg);
+//    }
+//}

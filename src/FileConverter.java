@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+//not used
 public class FileConverter {
 
     public ArrayList<String> convert(String filepath){

@@ -147,3 +147,7 @@ fragment LetterOrDigit
 fragment Letter
     : [a-zA-Z$_]
     ;
+
+//Error Handling
+INVALIDCHAR_LITERAL: '\'' (~['\\\r\n] | EscapeSequence)* '\'';
+UnknownToken: .; //unrecognized
