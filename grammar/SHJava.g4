@@ -150,4 +150,5 @@ fragment Letter
 
 //Error Handling
 INVALIDCHAR_LITERAL: '\'' (~['\\\r\n] | EscapeSequence)* '\'';
+INVALIDIDENTIFIER:Digits LetterOrDigit*;
 UnknownToken: .; //unrecognized

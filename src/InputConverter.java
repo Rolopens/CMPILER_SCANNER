@@ -43,10 +43,10 @@ public class InputConverter {
 
             System.out.println("RECOGNIZED TOKENS");
             while (token.getType() != SHJava.EOF) {
-                if(token.getType() != SHJava.WS && token.getType() != SHJava.INVALIDCHAR_LITERAL && token.getType() != SHJava.UnknownToken){
+                if(token.getType() != SHJava.WS && token.getType() != SHJava.INVALIDCHAR_LITERAL && token.getType() != SHJava.UnknownToken && token.getType() != SHJava.INVALIDIDENTIFIER){
                     System.out.println(getTokenType(token) + ": " + token.getText());
                 }
-                if(token.getType() == SHJava.INVALIDCHAR_LITERAL || token.getType() == SHJava.UnknownToken){
+                if(token.getType() == SHJava.INVALIDCHAR_LITERAL || token.getType() == SHJava.UnknownToken || token.getType() == SHJava.INVALIDIDENTIFIER){
                     unrecognizedTokens.add(token.getText());
                 }
                 token = lexer.nextToken();
@@ -82,9 +82,8 @@ public class InputConverter {
             case SHJava.COMMENT:
                 return "COMMENT";
             case SHJava.UnknownToken:
-                unrecognizedTokens.add(token.getText());
-                return "NO TOKEN CLASS: ";
             case SHJava.INVALIDCHAR_LITERAL:
+            case SHJava.INVALIDIDENTIFIER:
                 unrecognizedTokens.add(token.getText());
                 return "NO TOKEN CLASS";
             default:
