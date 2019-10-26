@@ -1,13 +1,42 @@
-pub cla Driver {
+pub cla DemoClass
+{
+    pub voi performFunction(dec x)
+    {
+        flo _sampleIdentifier123 = 999.9f
+        boo y = (5 > 4 && true) || (false && !(x==0));
+        dec[] myArray = cre dec[10];
+        dec y;
 
-    pub sta voi main(str[] args){
-        dec x = 2;
+        inp("Please input a number: ", x); //ask for user input
+        out("The input is: ", x); //print the input
+
+        iif(x != 0){
+            //TEST: sample single line comment
+        }
+        els{
+            /*TEST: sample multi-line comment
+            * Hello
+            * Creating a scanner is easy
+            */
+        }
+
+        y = x;
+        whi(x > 5) {
+            dur(dec i = 0; i < x; i++) {
+                out("Hello World");
+            }
+
+            x--;
+        }
+
+        ret y;
     }
-    Ñ
-    "Hello"
-    /
+
+    pub sta voi main(str[] args) {
+        dec x = 2;
+        DemoClass dc = cre DemoClass();
+        dc.performFunction(x);
+
+
+    }
 }
-/* hfjkdbhjfk */
-书
-'Hello'
-1abc

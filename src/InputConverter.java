@@ -81,6 +81,8 @@ public class InputConverter {
                 return "NULL_LITERAL";
             case SHJava.COMMENT:
                 return "COMMENT";
+            case SHJava.LINE_COMMENT:
+                return "LINE COMMENT";
             case SHJava.UnknownToken:
             case SHJava.INVALIDCHAR_LITERAL:
             case SHJava.INVALIDIDENTIFIER:
