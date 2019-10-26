@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.antlr.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.*;
 
 public class Driver {
@@ -18,8 +18,10 @@ public class Driver {
             CharStream input = CharStreams.fromFileName(filepath);
             converter.displayTokenClass(input);
             TokenStream tokenStream = new CommonTokenStream(converter.getLexer());
-            SHJavaParser parser = new SHJavaParser(tokenStream);
-            ParseTree tree = parser.compilationUnit();
+            SHJavaParser parser = new SHJavaParser(tokenStream);ParseTree tree = parser.compilationUnit();
+
+            System.out.println("\n" + tree.toStringTree(parser));
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e){
