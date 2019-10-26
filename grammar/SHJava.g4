@@ -113,9 +113,12 @@ SUB_ASSIGN:         '-=';
 MUL_ASSIGN:         '*=';
 DIV_ASSIGN:         '/=';
 
-//TOKENS
+//TOKENS and SYMBOLS
 TOKEN: AT;
 AT:                 '@';
+AMP:                '&';
+CARET:              '^';
+VBAR:               '|';
 
 //WHITESPACE AND COMMENTS
 //WS : [ \t\r\n]+ -> skip ;

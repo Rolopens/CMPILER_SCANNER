@@ -24,10 +24,20 @@
     <property name="$PROJECT_DIR$/grammar/SHJava.g4::/gen-listener" value="true" />
     <property name="$PROJECT_DIR$/grammar/SHJava.g4::/gen-visitor" value="false" />
     <property name="$PROJECT_DIR$/grammar/SHJava.g4::/output-dir" value="C:\Users\Rolo\Documents\GitHub\CMPILER_SCANNER\src" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+    <property name="$PROJECT_DIR$/grammar/SHJavaParser.g4::/auto-gen" value="true" />
+    <property name="$PROJECT_DIR$/grammar/SHJavaParser.g4::/gen-listener" value="true" />
+    <property name="$PROJECT_DIR$/grammar/SHJavaParser.g4::/gen-visitor" value="false" />
+    <property name="$PROJECT_DIR$/grammar/SHJavaParser.g4::/lib-dir" value="C:\Users\Rolo\Documents\GitHub\CMPILER_SCANNER\grammar" />
+    <property name="$PROJECT_DIR$/grammar/SHJavaParser.g4::/output-dir" value="C:\Users\Rolo\Documents\GitHub\CMPILER_SCANNER\src" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/grammar" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Rolo\Documents\GitHub\CMPILER_SCANNER\grammar" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -73,7 +83,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
