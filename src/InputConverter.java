@@ -60,7 +60,9 @@ public class InputConverter {
 
     private String getTokenType(Token token) {
         switch (token.getType()) {
-            case SHJava.KEYWORD:
+//            case SHJava.KEYWORD:
+            case SHJava.ABSTRACT:
+            case SHJava.ASSERT:
                 return "KEYWORD";
             case SHJava.SEPARATOR:
                 return "SEPARATOR";
