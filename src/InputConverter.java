@@ -63,10 +63,77 @@ public class InputConverter {
 //            case SHJava.KEYWORD:
             case SHJava.ABSTRACT:
             case SHJava.ASSERT:
+            case SHJava.BOOLEAN:
+            case SHJava.BREAK:
+            case SHJava.CASE:
+            case SHJava.CHAR:
+            case SHJava.CLASS:
+            case SHJava.CONST:
+            case SHJava.DEFAULT:
+            case SHJava.DO:
+            case SHJava.ELSE:
+            case SHJava.ENUM:
+            case SHJava.EXTENDS:
+            case SHJava.FINAL:
+            case SHJava.FLOAT:
+            case SHJava.FOR:
+            case SHJava.IF:
+            case SHJava.IMPLEMENTS:
+            case SHJava.INSTANCEOF:
+            case SHJava.INT:
+            case SHJava.INTERFACE:
+            case SHJava.NEW:
+            case SHJava.NULL:
+            case SHJava.PRIVATE:
+            case SHJava.PRINT:
+            case SHJava.PROTECTED:
+            case SHJava.PUBLIC:
+            case SHJava.RETURN:
+            case SHJava.SCAN:
+            case SHJava.STATIC:
+            case SHJava.STRING:
+            case SHJava.SUPER:
+            case SHJava.SWITCH:
+            case SHJava.THIS:
+            case SHJava.VOID:
+            case SHJava.WHILE:
                 return "KEYWORD";
-            case SHJava.SEPARATOR:
+//            case SHJava.SEPARATOR:
+            case SHJava.LPAREN:
+            case SHJava.RPAREN:
+            case SHJava.LBRACE:
+            case SHJava.RBRACE:
+            case SHJava.LBRACK:
+            case SHJava.RBRACK:
+            case SHJava.SEMI:
+            case SHJava.COMMA:
+            case SHJava.DOT:
                 return "SEPARATOR";
-            case SHJava.OPERATORS:
+//            case SHJava.OPERATORS:
+            case SHJava.ASSIGN:
+            case SHJava.GT:
+            case SHJava.LT:
+            case SHJava.BANG:
+            case SHJava.TILDE:
+            case SHJava.QUESTION:
+            case SHJava.COLON:
+            case SHJava.EQUAL:
+            case SHJava.LE:
+            case SHJava.GE:
+            case SHJava.NOTEQUAL:
+            case SHJava.AND:
+            case SHJava.OR:
+            case SHJava.INC:
+            case SHJava.DEC:
+            case SHJava.ADD:
+            case SHJava.SUB:
+            case SHJava.MUL:
+            case SHJava.DIV:
+            case SHJava.MOD:
+            case SHJava.ADD_ASSIGN:
+            case SHJava.SUB_ASSIGN:
+            case SHJava.MUL_ASSIGN:
+            case SHJava.DIV_ASSIGN:
                 return "OPERATORS";
             case SHJava.IDENTIFIER:
                 return "IDENTIFIER";
