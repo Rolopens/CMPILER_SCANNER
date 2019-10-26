@@ -7,6 +7,16 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface SHJavaParserListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#compilationUnit}.
+	 * @param ctx the parse tree
+	 */
+	void enterCompilationUnit(SHJavaParser.CompilationUnitContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#compilationUnit}.
+	 * @param ctx the parse tree
+	 */
+	void exitCompilationUnit(SHJavaParser.CompilationUnitContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SHJavaParser#typeDeclaration}.
 	 * @param ctx the parse tree
 	 */

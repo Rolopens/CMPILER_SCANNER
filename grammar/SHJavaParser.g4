@@ -2,10 +2,15 @@ parser grammar SHJavaParser;
 
 options { tokenVocab=SHJava; }
 
+compilationUnit
+    :  typeDeclaration* EOF
+    ;
+
 typeDeclaration
     : classOrInterfaceModifier* (classDeclaration | enumDeclaration | interfaceDeclaration)
     | ';'
     ;
+
 
 modifier
     : classOrInterfaceModifier

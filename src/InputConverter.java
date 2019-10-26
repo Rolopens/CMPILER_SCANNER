@@ -7,6 +7,7 @@ import java.util.List;
 public class InputConverter {
 
     ArrayList<String> unrecognizedTokens = new ArrayList<>();
+    private SHJava lexer;
 
     //Legacy Code
 //    public ArrayList<CharStream> convertInputs(List<String> inputs){
@@ -38,7 +39,7 @@ public class InputConverter {
 //    }
 
     public void displayTokenClass(CharStream input){
-            SHJava lexer = new SHJava(input);
+            lexer = new SHJava(input);
             Token token = lexer.nextToken();
 
             System.out.println("RECOGNIZED TOKENS");
@@ -98,6 +99,11 @@ public class InputConverter {
             System.out.println("Token " + i + ": " + unrecognizedTokens.get(i));
         }
     }
+
+    public SHJava getLexer(){
+        return lexer;
+    }
+
 }
 
 
