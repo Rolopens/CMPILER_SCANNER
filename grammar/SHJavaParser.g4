@@ -336,6 +336,8 @@ expression
     | expression bop='|' expression
     | expression bop='&&' expression
     | expression bop='||' expression
+    | <assoc=right> expression bop='?' expression ':' expression
+    | <assoc=right> expression bop=('=' | '+=' | '-=' | '*=' | '/=' ) expression
     ;
 
 primary
