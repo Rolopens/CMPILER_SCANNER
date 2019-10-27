@@ -8,7 +8,8 @@ pub cla DemoClass
         dec y;
 
         //inp("Please input a number: ", x); //ask for user input
-        inp();
+        inp("dwdwd");
+        kjgldkrkgo
         out("The input is: "); //print the input
 
         iif(x != 0){

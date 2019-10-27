@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.antlr.v4.gui.TreeViewer;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.*;
 
@@ -39,11 +40,17 @@ public class Driver {
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 //        System.out.println("TOKEN STREAM: \n" + tokenStream.toString());
         SHJavaParser parser = new SHJavaParser(tokenStream);
-        ParseTree tree = parser.compilationUnit();
+        parser.removeErrorListeners();
+        parser.addErrorListener(CustomErrorListener.INSTANCE);
 
-//        System.out.println("\n" + tree.toStringTree(parser));
+        ParseTree tree = parser.compilationUnit();
         TreeViewer viewer = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);
         viewer.open();
+
+
+
+//        System.out.println("\n" + tree.toStringTree(parser));
+
 
 //LEGACY CODE
 //        ArrayList<String> inputs;
