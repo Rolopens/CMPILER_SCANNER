@@ -18,15 +18,15 @@ public class Driver {
         //declare variables
         String filepath = "./input.txt";
         InputConverter converter = new InputConverter();
-//        try {
-//            CharStream input = CharStreams.fromFileName(filepath);
-//            converter.displayTokenClass(input);
-//
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e){
-//            e.printStackTrace();
-//        }
+        try {
+            CharStream input = CharStreams.fromFileName(filepath);
+            converter.displayTokenClass(input);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
 
         CharStream input = null;
         try {
@@ -41,10 +41,9 @@ public class Driver {
         SHJavaParser parser = new SHJavaParser(tokenStream);
         ParseTree tree = parser.compilationUnit();
 
-        System.out.println("\n" + tree.toStringTree(parser));
-        TreeViewer viewr = new TreeViewer(Arrays.asList(
-                parser.getRuleNames()),tree);
-        viewr.open();
+//        System.out.println("\n" + tree.toStringTree(parser));
+        TreeViewer viewer = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);
+        viewer.open();
 
 //LEGACY CODE
 //        ArrayList<String> inputs;

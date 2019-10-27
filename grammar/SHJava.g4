@@ -41,6 +41,13 @@ VOID:               'voi';
 WHILE:              'whi';
 
 //LITERALS
+//PRINTABLE_LITERALS
+//	: DECIMAL_LITERAL
+//	| FLOAT_LITERAL
+//	| CHAR_LITERAL
+//	| STRING_LITERAL
+//;
+
 DECIMAL_LITERAL
 :    ('0' | [1-9] (Digits? | '_'+ Digits)) [IL]?
 ;
@@ -66,12 +73,8 @@ STRING_LITERAL
 NULL_LITERAL
 :       'null'
 ;
-PRINTABLE_LITERALS
-	: DECIMAL_LITERAL
-	| FLOAT_LITERAL
-	| CHAR_LITERAL
-	| STRING_LITERAL
-;
+
+
 
 
 //SEPARATORS

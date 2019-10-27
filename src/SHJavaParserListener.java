@@ -497,6 +497,16 @@ public interface SHJavaParserListener extends ParseTreeListener {
 	 */
 	void exitBlockStatement(SHJavaParser.BlockStatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#variableAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariableAssignment(SHJavaParser.VariableAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#variableAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariableAssignment(SHJavaParser.VariableAssignmentContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SHJavaParser#localVariableDeclaration}.
 	 * @param ctx the parse tree
 	 */

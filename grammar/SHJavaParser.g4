@@ -231,8 +231,18 @@ block
 
 blockStatement
     : localVariableDeclaration ';'
+    | variableAssignment';'
     | statement
     | localTypeDeclaration
+    ;
+
+variableAssignment
+    : IDENTIFIER '=' IDENTIFIER
+    | IDENTIFIER '=' DECIMAL_LITERAL
+    | IDENTIFIER '=' CHAR_LITERAL
+    | IDENTIFIER '=' STRING_LITERAL
+    | IDENTIFIER '=' FLOAT_LITERAL
+    | IDENTIFIER '=' expression
     ;
 
 localVariableDeclaration
@@ -392,6 +402,7 @@ primitiveType
     | CHAR
     | INT
     | FLOAT
+    | STRING
     ;
 
 typeArguments
@@ -411,6 +422,19 @@ scanStatement
     : SCAN '(' ')'
     ;
 
+//printStatement
+//    : PRINT '(' DECIMAL_LITERAL | CHAR_LITERAL | FLOAT_LITERAL | STRING_LITERAL | expression (('+') (DECIMAL_LITERAL | CHAR_LITERAL | FLOAT_LITERAL | STRING_LITERAL | expression))* ')'
+//    ;
+
 printStatement
-    : PRINT '(' PRINTABLE_LITERALS |expression (('+') (PRINTABLE_LITERALS | expression))* ')'
+    : PRINT '(' DECIMAL_LITERAL ')'
+    | PRINT '(' CHAR_LITERAL ')'
+    | PRINT '(' FLOAT_LITERAL ')'
+    | PRINT '(' STRING_LITERAL ')'
+    | PRINT '(' expression ')'
+    | PRINT '(' expression (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ')'
+    | PRINT '(' DECIMAL_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ')'
+    | PRINT '(' CHAR_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ')'
+    | PRINT '(' FLOAT_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ')'
+    | PRINT '(' STRING_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ')'
     ;

@@ -2,13 +2,14 @@ pub cla DemoClass
 {
     pub voi performFunction(dec x)
     {
-        flo _sampleIdentifier123 = 999.9f
+        flo _sampleIdentifier123 = 999.9f;
         boo y = (5 > 4 && true) || (false && !(x==0));
         dec[] myArray = cre dec[10];
         dec y;
 
-        inp("Please input a number: ", x); //ask for user input
-        out("The input is: ", x); //print the input
+        //inp("Please input a number: ", x); //ask for user input
+        inp();
+        out("The input is: "); //print the input
 
         iif(x != 0){
             //TEST: sample single line comment
