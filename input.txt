@@ -2,7 +2,7 @@ pub cla DemoClass
 {
     pub voi performFunction(dec x)
     {
-        flo _sampleIdentifier123 = 999.9f;
+        flo _sampleIdentifier123 = 999.9f
         boo y = (5 > 4 && true) || (false && !(x==0));
         dec[] myArray = cre dec[10];
         dec y;

@@ -34,7 +34,7 @@ public class Driver {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("\n\nLEXER ERRORS:");
+        System.out.println("\nSYNTAX ERRORS:");
         SHJava lexer = new SHJava(input);
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 //        System.out.println("TOKEN STREAM: \n" + tokenStream.toString());
