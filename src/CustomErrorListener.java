@@ -26,6 +26,6 @@ public class CustomErrorListener extends BaseErrorListener {
             msg = newMsg[0];
         }
 
-        System.out.println("line "+line+":"+charPositionInLine+" "+msg);
+        System.out.println("[ERROR] at line "+line+":"+charPositionInLine+" "+msg);
     }
 }

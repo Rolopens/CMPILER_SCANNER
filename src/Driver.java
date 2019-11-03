@@ -10,6 +10,7 @@ import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import javax.swing.*;
 
@@ -47,6 +48,10 @@ public class Driver {
         TreeViewer viewer = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);
         viewer.open();
 
+//        MyListener listener = new MyListener();
+//
+//        ParseTreeWalker walker = new ParseTreeWalker();
+//        walker.walk(listener,tree);
 
 //        System.out.println("\n" + tree.toStringTree(parser));
 

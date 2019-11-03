@@ -1,35 +1,55 @@
-parser grammar SHJavaParser;
+//ANTLR4 Java
+parser grammar LegacyGrammar;
 
 options { tokenVocab=SHJava; }
 
 compilationUnit
-    :  typeDeclaration* EOF
+    : packageDeclaration? importDeclaration* typeDeclaration* EOF
+    ;
+
+packageDeclaration
+    : annotation* PACKAGE qualifiedName ';'
+    ;
+
+importDeclaration
+    : IMPORT STATIC? qualifiedName ('.' '*')? ';'
     ;
 
 typeDeclaration
-    : classOrInterfaceModifier* (classDeclaration | enumDeclaration | interfaceDeclaration)
+    : classOrInterfaceModifier*
+      (classDeclaration | enumDeclaration | interfaceDeclaration | annotationTypeDeclaration)
     | ';'
     ;
 
-
 modifier
     : classOrInterfaceModifier
+    | NATIVE
+    | SYNCHRONIZED
+    | TRANSIENT
+    | VOLATILE
     ;
 
 classOrInterfaceModifier
-    : PUBLIC
+    : annotation
+    | PUBLIC
     | PROTECTED
     | PRIVATE
     | STATIC
     | ABSTRACT
-    | FINAL
+    | FINAL    // FINAL for class only -- does not apply to interfaces
+    | STRICTFP
     ;
 
 variableModifier
     : FINAL
+    | annotation
     ;
+
 classDeclaration
-    : CLASS IDENTIFIER typeParameters? (EXTENDS typeType)? (IMPLEMENTS typeList)?     classBody
+    : CLASS IDENTIFIER typeParameters?
+      (EXTENDS typeType)?
+      (IMPLEMENTS typeList)?
+      classBody
     ;
 
 typeParameters
@@ -37,7 +57,7 @@ typeParameters
     ;
 
 typeParameter
-    : IDENTIFIER (EXTENDS typeBound)?
+    : annotation* IDENTIFIER (EXTENDS typeBound)?
     ;
 
 typeBound
@@ -53,7 +73,7 @@ enumConstants
     ;
 
 enumConstant
-    : IDENTIFIER arguments? classBody?
+    : annotation* IDENTIFIER arguments? classBody?
     ;
 
 enumBodyDeclarations
@@ -85,12 +105,20 @@ memberDeclaration
     | constructorDeclaration
     | genericConstructorDeclaration
     | interfaceDeclaration
+    | annotationTypeDeclaration
     | classDeclaration
     | enumDeclaration
     ;
 
+/* We use rule this even for void methods which cannot have [] after parameters.
+   This simplifies grammar and we can consider void to be a type, which
+   renders the [] matching as a context-sensitive issue or a semantic check
+   for invalid return type after parsing.
+ */
 methodDeclaration
-    : typeTypeOrVoid IDENTIFIER formalParameters ('[' ']')* methodBody
+    : typeTypeOrVoid IDENTIFIER formalParameters ('[' ']')*
+      (THROWS qualifiedNameList)?
+      methodBody
     ;
 
 methodBody
@@ -112,12 +140,13 @@ genericConstructorDeclaration
     ;
 
 constructorDeclaration
-    : IDENTIFIER formalParameters block
+    : IDENTIFIER formalParameters (THROWS qualifiedNameList)? constructorBody=block
     ;
 
 fieldDeclaration
     : typeType variableDeclarators ';'
     ;
+
 interfaceBodyDeclaration
     : modifier* interfaceMemberDeclaration
     | ';'
@@ -128,6 +157,7 @@ interfaceMemberDeclaration
     | interfaceMethodDeclaration
     | genericInterfaceMethodDeclaration
     | interfaceDeclaration
+    | annotationTypeDeclaration
     | classDeclaration
     | enumDeclaration
     ;
@@ -140,16 +170,21 @@ constantDeclarator
     : IDENTIFIER ('[' ']')* '=' variableInitializer
     ;
 
+// see matching of [] comment in methodDeclaratorRest
+// methodBody from Java8
 interfaceMethodDeclaration
-    : interfaceMethodModifier* (typeTypeOrVoid | typeParameters typeTypeOrVoid)
-      IDENTIFIER formalParameters ('[' ']')* methodBody
+    : interfaceMethodModifier* (typeTypeOrVoid | typeParameters annotation* typeTypeOrVoid)
+      IDENTIFIER formalParameters ('[' ']')* (THROWS qualifiedNameList)? methodBody
     ;
 
+// Java8
 interfaceMethodModifier
-    : PUBLIC
+    : annotation
+    | PUBLIC
     | ABSTRACT
     | DEFAULT
     | STATIC
+    | STRICTFP
     ;
 
 genericInterfaceMethodDeclaration
@@ -162,7 +197,6 @@ variableDeclarators
 
 variableDeclarator
     : variableDeclaratorId ('=' variableInitializer)?
-    | variableDeclaratorId ('=' scanStatement)?
     ;
 
 variableDeclaratorId
@@ -175,7 +209,7 @@ variableInitializer
     ;
 
 arrayInitializer
-    : '{' (variableInitializer (',' variableInitializer)* )? '}'
+    : '{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
     ;
 
 classOrInterfaceType
@@ -187,7 +221,6 @@ typeArgument
     | '?' ((EXTENDS | SUPER) typeType)?
     ;
 
-
 qualifiedNameList
     : qualifiedName (',' qualifiedName)*
     ;
@@ -197,11 +230,16 @@ formalParameters
     ;
 
 formalParameterList
-    : formalParameter (',' formalParameter)*
+    : formalParameter (',' formalParameter)* (',' lastFormalParameter)?
+    | lastFormalParameter
     ;
 
 formalParameter
     : variableModifier* typeType variableDeclaratorId
+    ;
+
+lastFormalParameter
+    : variableModifier* typeType '...' variableDeclaratorId
     ;
 
 qualifiedName
@@ -219,12 +257,79 @@ literal
 
 integerLiteral
     : DECIMAL_LITERAL
+    | HEX_LITERAL
+    | OCT_LITERAL
+    | BINARY_LITERAL
     ;
 
 floatLiteral
     : FLOAT_LITERAL
+    | HEX_FLOAT_LITERAL
     ;
 
+// ANNOTATIONS
+
+annotation
+    : '@' qualifiedName ('(' ( elementValuePairs | elementValue )? ')')?
+    ;
+
+elementValuePairs
+    : elementValuePair (',' elementValuePair)*
+    ;
+
+elementValuePair
+    : IDENTIFIER '=' elementValue
+    ;
+
+elementValue
+    : expression
+    | annotation
+    | elementValueArrayInitializer
+    ;
+
+elementValueArrayInitializer
+    : '{' (elementValue (',' elementValue)*)? (',')? '}'
+    ;
+
+annotationTypeDeclaration
+    : '@' INTERFACE IDENTIFIER annotationTypeBody
+    ;
+
+annotationTypeBody
+    : '{' (annotationTypeElementDeclaration)* '}'
+    ;
+
+annotationTypeElementDeclaration
+    : modifier* annotationTypeElementRest
+    | ';' // this is not allowed by the grammar, but apparently allowed by the actual compiler
+    ;
+
+annotationTypeElementRest
+    : typeType annotationMethodOrConstantRest ';'
+    | classDeclaration ';'?
+    | interfaceDeclaration ';'?
+    | enumDeclaration ';'?
+    | annotationTypeDeclaration ';'?
+    ;
+
+annotationMethodOrConstantRest
+    : annotationMethodRest
+    | annotationConstantRest
+    ;
+
+annotationMethodRest
+    : IDENTIFIER '(' ')' defaultValue?
+    ;
+
+annotationConstantRest
+    : variableDeclarators
+    ;
+
+defaultValue
+    : DEFAULT elementValue
+    ;
+
+// STATEMENTS / BLOCKS
 
 block
     : '{' blockStatement* '}'
@@ -232,19 +337,8 @@ block
 
 blockStatement
     : localVariableDeclaration ';'
-    | variableAssignment';'
     | statement
     | localTypeDeclaration
-    ;
-
-variableAssignment
-    : IDENTIFIER '=' IDENTIFIER
-    | IDENTIFIER '=' DECIMAL_LITERAL
-    | IDENTIFIER '=' CHAR_LITERAL
-    | IDENTIFIER '=' STRING_LITERAL
-    | IDENTIFIER '=' FLOAT_LITERAL
-    | IDENTIFIER '=' expression
-    | IDENTIFIER '=' scanStatement
     ;
 
 localVariableDeclaration
@@ -264,16 +358,48 @@ statement
     | FOR '(' forControl ')' statement
     | WHILE parExpression statement
     | DO statement WHILE parExpression ';'
+    | TRY block (catchClause+ finallyBlock? | finallyBlock)
+    | TRY resourceSpecification block catchClause* finallyBlock?
     | SWITCH parExpression '{' switchBlockStatementGroup* switchLabel* '}'
+    | SYNCHRONIZED parExpression block
     | RETURN expression? ';'
+    | THROW expression ';'
     | BREAK IDENTIFIER? ';'
+    | CONTINUE IDENTIFIER? ';'
     | SEMI
     | statementExpression=expression ';'
     | identifierLabel=IDENTIFIER ':' statement
-    | printStatement
-    | scanStatement
+    | scanStatement ';'
+    | printStatement ';'
     ;
 
+catchClause
+    : CATCH '(' variableModifier* catchType IDENTIFIER ')' block
+    ;
+
+catchType
+    : qualifiedName ('|' qualifiedName)*
+    ;
+
+finallyBlock
+    : FINALLY block
+    ;
+
+resourceSpecification
+    : '(' resources ';'? ')'
+    ;
+
+resources
+    : resource (';' resource)*
+    ;
+
+resource
+    : variableModifier* classOrInterfaceType variableDeclaratorId '=' expression
+    ;
+
+/** Matches cases then statements, both of which are mandatory.
+ *  To handle empty cases at the end, we add switchLabel* to statement.
+ */
 switchBlockStatementGroup
     : switchLabel+ blockStatement+
     ;
@@ -297,6 +423,8 @@ enhancedForControl
     : variableModifier* typeType variableDeclaratorId ':' expression
     ;
 
+// EXPRESSIONS
+
 parExpression
     : '(' expression ')'
     ;
@@ -305,14 +433,10 @@ expressionList
     : expression (',' expression)*
     ;
 
-methodExpressionList
-    : methodExpression (',' methodExpression)*
-    ;
-
 methodCall
-    : IDENTIFIER '(' methodExpressionList? ')'
-    | THIS '(' methodExpressionList? ')'
-    | SUPER '(' methodExpressionList? ')'
+    : IDENTIFIER '(' expressionList? ')'
+    | THIS '(' expressionList? ')'
+    | SUPER '(' expressionList? ')'
     ;
 
 expression
@@ -323,16 +447,17 @@ expression
       | THIS
       | NEW nonWildcardTypeArguments? innerCreator
       | SUPER superSuffix
+      | explicitGenericInvocation
       )
     | expression '[' expression ']'
     | methodCall
     | NEW creator
     | '(' typeType ')' expression
-    | expression bop=('+'|'-') expression
     | expression postfix=('++' | '--')
     | prefix=('+'|'-'|'++'|'--') expression
     | prefix=('~'|'!') expression
     | expression bop=('*'|'/'|'%') expression
+    | expression bop=('+'|'-') expression
     | expression ('<' '<' | '>' '>' '>' | '>' '>') expression
     | expression bop=('<=' | '>=' | '>' | '<') expression
     | expression bop=INSTANCEOF typeType
@@ -343,38 +468,33 @@ expression
     | expression bop='&&' expression
     | expression bop='||' expression
     | <assoc=right> expression bop='?' expression ':' expression
-    | <assoc=right> expression bop=('=' | '+=' | '-=' | '*=' | '/=' ) expression
+    | <assoc=right> expression
+      bop=('=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=' | '%=')
+      expression
+    | lambdaExpression // Java8
+
+    // Java 8 methodReference
+    | expression '::' typeArguments? IDENTIFIER
+    | typeType '::' (typeArguments? IDENTIFIER | NEW)
+    | classType '::' typeArguments? NEW
     ;
 
-methodExpression
-    : primary
-    | methodExpression bop='.'
-      ( IDENTIFIER
-      | methodCall
-      | THIS
-      | NEW nonWildcardTypeArguments? innerCreator
-      | SUPER superSuffix
-      )
-    | methodExpression '[' methodExpression ']'
-    | methodCall
-    | NEW creator
-    | '(' typeType ')' methodExpression
-    | methodExpression bop=('+'|'-') methodExpression
-//    | expression postfix=('++' | '--')
-//    | prefix=('+'|'-'|'++'|'--') expression
-    | prefix=('~'|'!') methodExpression
-    | methodExpression bop=('*'|'/'|'%') methodExpression
-//    | expression ('<' '<' | '>' '>' '>' | '>' '>') expression
-    | methodExpression bop=('<=' | '>=' | '>' | '<') methodExpression
-    | methodExpression bop=INSTANCEOF typeType
-    | methodExpression bop=('==' | '!=') methodExpression
-    | methodExpression bop='&' methodExpression
-    | methodExpression bop='^' methodExpression
-    | methodExpression bop='|' methodExpression
-    | methodExpression bop='&&' methodExpression
-    | methodExpression bop='||' methodExpression
-    | <assoc=right> methodExpression bop='?' methodExpression ':' methodExpression
-//    | <assoc=right> expression bop=('=' | '+=' | '-=' | '*=' | '/=' ) expression
+// Java8
+lambdaExpression
+    : lambdaParameters '->' lambdaBody
+    ;
+
+// Java8
+lambdaParameters
+    : IDENTIFIER
+    | '(' formalParameterList? ')'
+    | '(' IDENTIFIER (',' IDENTIFIER)* ')'
+    ;
+
+// Java8
+lambdaBody
+    : expression
+    | block
     ;
 
 primary
@@ -384,11 +504,11 @@ primary
     | literal
     | IDENTIFIER
     | typeTypeOrVoid '.' CLASS
-    | nonWildcardTypeArguments (THIS arguments)
+    | nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments)
     ;
 
 classType
-    : (classOrInterfaceType '.')? IDENTIFIER typeArguments?
+    : (classOrInterfaceType '.')? annotation* IDENTIFIER typeArguments?
     ;
 
 creator
@@ -413,6 +533,9 @@ classCreatorRest
     : arguments classBody?
     ;
 
+explicitGenericInvocation
+    : nonWildcardTypeArguments explicitGenericInvocationSuffix
+    ;
 
 typeArgumentsOrDiamond
     : '<' '>'
@@ -433,14 +556,18 @@ typeList
     ;
 
 typeType
-    : (classOrInterfaceType | primitiveType) ('[' ']')*
+    : annotation? (classOrInterfaceType | primitiveType) ('[' ']')*
     ;
 
 primitiveType
     : BOOLEAN
     | CHAR
+    | BYTE
+    | SHORT
     | INT
+    | LONG
     | FLOAT
+    | DOUBLE
     | STRING
     ;
 
@@ -451,6 +578,11 @@ typeArguments
 superSuffix
     : arguments
     | '.' IDENTIFIER arguments?
+    ;
+
+explicitGenericInvocationSuffix
+    : SUPER superSuffix
+    | IDENTIFIER arguments
     ;
 
 arguments

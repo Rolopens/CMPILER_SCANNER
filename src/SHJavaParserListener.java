@@ -607,6 +607,16 @@ public interface SHJavaParserListener extends ParseTreeListener {
 	 */
 	void exitExpressionList(SHJavaParser.ExpressionListContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#methodExpressionList}.
+	 * @param ctx the parse tree
+	 */
+	void enterMethodExpressionList(SHJavaParser.MethodExpressionListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#methodExpressionList}.
+	 * @param ctx the parse tree
+	 */
+	void exitMethodExpressionList(SHJavaParser.MethodExpressionListContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SHJavaParser#methodCall}.
 	 * @param ctx the parse tree
 	 */
@@ -626,6 +636,16 @@ public interface SHJavaParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpression(SHJavaParser.ExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#methodExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterMethodExpression(SHJavaParser.MethodExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#methodExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitMethodExpression(SHJavaParser.MethodExpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SHJavaParser#primary}.
 	 * @param ctx the parse tree

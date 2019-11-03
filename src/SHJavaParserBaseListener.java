@@ -735,6 +735,18 @@ public class SHJavaParserBaseListener implements SHJavaParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterMethodExpressionList(SHJavaParser.MethodExpressionListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMethodExpressionList(SHJavaParser.MethodExpressionListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterMethodCall(SHJavaParser.MethodCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -754,6 +766,18 @@ public class SHJavaParserBaseListener implements SHJavaParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExpression(SHJavaParser.ExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMethodExpression(SHJavaParser.MethodExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMethodExpression(SHJavaParser.MethodExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
