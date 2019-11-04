@@ -577,6 +577,16 @@ public interface SHJavaParserListener extends ParseTreeListener {
 	 */
 	void exitForInit(SHJavaParser.ForInitContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#forDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterForDeclaration(SHJavaParser.ForDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#forDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitForDeclaration(SHJavaParser.ForDeclarationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SHJavaParser#enhancedForControl}.
 	 * @param ctx the parse tree
 	 */
@@ -636,6 +646,16 @@ public interface SHJavaParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpression(SHJavaParser.ExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#comparisonExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterComparisonExpression(SHJavaParser.ComparisonExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#comparisonExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitComparisonExpression(SHJavaParser.ComparisonExpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SHJavaParser#methodExpression}.
 	 * @param ctx the parse tree

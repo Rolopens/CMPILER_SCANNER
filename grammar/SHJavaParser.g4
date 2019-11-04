@@ -176,6 +176,7 @@ variableInitializer
 
 arrayInitializer
     : '{' (variableInitializer (',' variableInitializer)* )? '}'
+//    | NEW typeType '[' DECIMAL_LITERAL ']'
     ;
 
 classOrInterfaceType
@@ -289,8 +290,14 @@ forControl
     ;
 
 forInit
-    : localVariableDeclaration
-    | expressionList
+//    : localVariableDeclaration
+//    | expressionList
+    : forDeclaration (',' forDeclaration)*
+    ;
+
+forDeclaration
+    : typeType? IDENTIFIER '=' DECIMAL_LITERAL
+    | typeType? IDENTIFIER '=' FLOAT_LITERAL
     ;
 
 enhancedForControl
@@ -298,7 +305,7 @@ enhancedForControl
     ;
 
 parExpression
-    : '(' expression ')'
+    : '(' comparisonExpression ')'
     ;
 
 expressionList
@@ -333,7 +340,7 @@ expression
     | prefix=('+'|'-'|'++'|'--') expression
     | prefix=('~'|'!') expression
     | expression bop=('*'|'/'|'%') expression
-    | expression ('<' '<' | '>' '>' '>' | '>' '>') expression
+//    | expression ('<' '<' | '>' '>' '>' | '>' '>') expression
     | expression bop=('<=' | '>=' | '>' | '<') expression
     | expression bop=INSTANCEOF typeType
     | expression bop=('==' | '!=') expression
@@ -343,7 +350,38 @@ expression
     | expression bop='&&' expression
     | expression bop='||' expression
     | <assoc=right> expression bop='?' expression ':' expression
-    | <assoc=right> expression bop=('=' | '+=' | '-=' | '*=' | '/=' ) expression
+    | <assoc=right> IDENTIFIER bop=('=' | '+=' | '-=' | '*=' | '/=' ) expression
+    ;
+
+comparisonExpression
+: primary
+    | expression bop='.'
+      ( IDENTIFIER
+      | methodCall
+      | THIS
+      | NEW nonWildcardTypeArguments? innerCreator
+      | SUPER superSuffix
+      )
+    | expression '[' expression ']'
+    | methodCall
+    | NEW creator
+    | '(' typeType ')' expression
+    | expression bop=('+'|'-') expression
+    | expression postfix=('++' | '--')
+    | prefix=('+'|'-'|'++'|'--') expression
+    | prefix=('~'|'!') expression
+    | expression bop=('*'|'/'|'%') expression
+//    | expression ('<' '<' | '>' '>' '>' | '>' '>') expression
+    | expression bop=('<=' | '>=' | '>' | '<') expression
+    | expression bop=INSTANCEOF typeType
+    | expression bop=('==' | '!=') expression
+    | expression bop='&' expression
+    | expression bop='^' expression
+    | expression bop='|' expression
+    | expression bop='&&' expression
+    | expression bop='||' expression
+//    | <assoc=right> expression bop='?' expression ':' expression
+//    | <assoc=right> expression bop=('=' | '+=' | '-=' | '*=' | '/=' ) expression
     ;
 
 methodExpression
@@ -374,7 +412,7 @@ methodExpression
     | methodExpression bop='&&' methodExpression
     | methodExpression bop='||' methodExpression
     | <assoc=right> methodExpression bop='?' methodExpression ':' methodExpression
-//    | <assoc=right> expression bop=('=' | '+=' | '-=' | '*=' | '/=' ) expression
+    | <assoc=right> IDENTIFIER bop=('=' | '+=' | '-=' | '*=' | '/=' ) expression
     ;
 
 primary
