@@ -587,6 +587,16 @@ public interface SHJavaParserListener extends ParseTreeListener {
 	 */
 	void exitForDeclaration(SHJavaParser.ForDeclarationContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#forWrongDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterForWrongDeclaration(SHJavaParser.ForWrongDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#forWrongDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitForWrongDeclaration(SHJavaParser.ForWrongDeclarationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SHJavaParser#enhancedForControl}.
 	 * @param ctx the parse tree
 	 */
@@ -846,4 +856,54 @@ public interface SHJavaParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPrintStatement(SHJavaParser.PrintStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#primaryError}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimaryError(SHJavaParser.PrimaryErrorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#primaryError}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimaryError(SHJavaParser.PrimaryErrorContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#invalidPrintStatmentPlus}.
+	 * @param ctx the parse tree
+	 */
+	void enterInvalidPrintStatmentPlus(SHJavaParser.InvalidPrintStatmentPlusContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#invalidPrintStatmentPlus}.
+	 * @param ctx the parse tree
+	 */
+	void exitInvalidPrintStatmentPlus(SHJavaParser.InvalidPrintStatmentPlusContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#invalidPrintStatmentExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterInvalidPrintStatmentExpression(SHJavaParser.InvalidPrintStatmentExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#invalidPrintStatmentExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitInvalidPrintStatmentExpression(SHJavaParser.InvalidPrintStatmentExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#invalidExpressionForPrinting}.
+	 * @param ctx the parse tree
+	 */
+	void enterInvalidExpressionForPrinting(SHJavaParser.InvalidExpressionForPrintingContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#invalidExpressionForPrinting}.
+	 * @param ctx the parse tree
+	 */
+	void exitInvalidExpressionForPrinting(SHJavaParser.InvalidExpressionForPrintingContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#invalidPrintStatmentLackingQuotations}.
+	 * @param ctx the parse tree
+	 */
+	void enterInvalidPrintStatmentLackingQuotations(SHJavaParser.InvalidPrintStatmentLackingQuotationsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#invalidPrintStatmentLackingQuotations}.
+	 * @param ctx the parse tree
+	 */
+	void exitInvalidPrintStatmentLackingQuotations(SHJavaParser.InvalidPrintStatmentLackingQuotationsContext ctx);
 }

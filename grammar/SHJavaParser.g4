@@ -269,10 +269,14 @@ statement
     | RETURN expression? ';'
     | BREAK IDENTIFIER? ';'
     | SEMI
+    | primaryError
     | statementExpression=expression ';'
     | identifierLabel=IDENTIFIER ':' statement
-    | printStatement
-    | scanStatement
+    | invalidPrintStatmentPlus ';'
+    | invalidPrintStatmentExpression ';'
+    | invalidPrintStatmentLackingQuotations ';'
+    | printStatement ';'
+    | scanStatement ';'
     ;
 
 switchBlockStatementGroup
@@ -286,18 +290,24 @@ switchLabel
 
 forControl
     : enhancedForControl
-    | forInit? ';' expression? ';' forUpdate=expressionList?
+    | forInit? ';' comparisonExpression? ';' forUpdate=expressionList?
     ;
 
 forInit
 //    : localVariableDeclaration
 //    | expressionList
     : forDeclaration (',' forDeclaration)*
+    | forWrongDeclaration (','forWrongDeclaration)*
     ;
 
 forDeclaration
     : typeType? IDENTIFIER '=' DECIMAL_LITERAL
     | typeType? IDENTIFIER '=' FLOAT_LITERAL
+    ;
+
+forWrongDeclaration
+    : typeType? IDENTIFIER
+    | typeType? IDENTIFIER
     ;
 
 enhancedForControl
@@ -327,7 +337,6 @@ expression
     | expression bop='.'
       ( IDENTIFIER
       | methodCall
-      | THIS
       | NEW nonWildcardTypeArguments? innerCreator
       | SUPER superSuffix
       )
@@ -514,4 +523,68 @@ printStatement
     | PRINT '(' CHAR_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ')'
     | PRINT '(' FLOAT_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ')'
     | PRINT '(' STRING_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ')'
+    ;
+
+primaryError
+    : '(' expression ')' ';'
+    | literal ';'
+    | IDENTIFIER ';'
+    ;
+
+invalidPrintStatmentPlus
+    : PRINT '(' FLOAT_LITERAL ('+')+ ')'
+    | PRINT '(' STRING_LITERAL ('+')+ ')'
+    | PRINT '(' expression ('+')+ ')'
+    | PRINT '(' expression (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ('+')+')'
+    | PRINT '(' DECIMAL_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))*  ('+')+')'
+    | PRINT '(' CHAR_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ('+')+')'
+    | PRINT '(' FLOAT_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ('+')+')'
+    | PRINT '(' STRING_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ('+')+')'
+    ;
+
+invalidPrintStatmentExpression
+    : PRINT '(' invalidExpressionForPrinting ')'
+    ;
+
+invalidExpressionForPrinting
+//    : primary
+        : expression bop='.'
+          ( IDENTIFIER
+          | methodCall
+          | THIS
+          | NEW nonWildcardTypeArguments? innerCreator
+          | SUPER superSuffix
+          )
+        | expression '[' expression ']'
+        | methodCall
+        | NEW creator
+        | '(' typeType ')' expression
+//        | expression bop=('+'|'-') expression
+        | expression postfix=('++' | '--')
+        | prefix=('+'|'-'|'++'|'--') expression
+//        | prefix=('~'|'!') expression
+//        | expression bop=('*'|'/'|'%') expression
+//        | expression bop=('<=' | '>=' | '>' | '<') expression
+        | expression bop=INSTANCEOF typeType
+        | expression bop=('==' | '!=') expression
+//        | expression bop='&' expression
+        | expression bop='^' expression
+//        | expression bop='|' expression
+//        | expression bop='&&' expression
+//        | expression bop='||' expression
+        | <assoc=right> expression bop='?' expression ':' expression
+        | <assoc=right> IDENTIFIER bop=('=' | '+=' | '-=' | '*=' | '/=' ) expression
+        | <assoc=right> expression bop=('=' | '+=' | '-=' | '*=' | '/=' ) expression
+        ;
+
+invalidPrintStatmentLackingQuotations
+    : PRINT '(' QUOTE (IDENTIFIER) (IDENTIFIER)+ ')'
+    | PRINT '(' (IDENTIFIER) (IDENTIFIER)+ QUOTE ')'
+    | PRINT '(' (IDENTIFIER) (IDENTIFIER)+ ')'
+//    | PRINT '(' expression ('+')+ ')'
+//    | PRINT '(' expression (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ('+')+')'
+//    | PRINT '(' DECIMAL_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))*  ('+')+')'
+//    | PRINT '(' CHAR_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ('+')+')'
+//    | PRINT '(' FLOAT_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ('+')+')'
+//    | PRINT '(' STRING_LITERAL (('+') (DECIMAL_LITERAL))* (('+') (CHAR_LITERAL))*(('+') (FLOAT_LITERAL))*(('+') (STRING_LITERAL))* (('+') (expression))* ('+')+')'
     ;

@@ -74,9 +74,6 @@ NULL_LITERAL
 :       'null'
 ;
 
-
-
-
 //SEPARATORS
 //SEPARATOR: LPAREN | RPAREN | LBRACE | RBRACE | LBRACK | RBRACK | SEMI | COMMA | DOT;
 LPAREN:             '(';
@@ -167,4 +164,5 @@ fragment Letter
 //Error Handling
 INVALIDCHAR_LITERAL: '\'' (~['\\\r\n] | EscapeSequence)* '\'';
 INVALIDIDENTIFIER:Digits LetterOrDigit*;
+QUOTE: '"';
 UnknownToken: .; //unrecognized
