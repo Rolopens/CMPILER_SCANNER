@@ -42,7 +42,8 @@ public class Driver {
 //        System.out.println("TOKEN STREAM: \n" + tokenStream.toString());
         SHJavaParser parser = new SHJavaParser(tokenStream);
         parser.removeErrorListeners();
-        parser.addErrorListener(CustomErrorListener.INSTANCE);
+//        parser.addErrorListener(CustomErrorListener.INSTANCE);
+        parser.addParseListener(CustomParserListener.INSTANCE);
 
         ParseTree tree = parser.compilationUnit();
         TreeViewer viewer = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);

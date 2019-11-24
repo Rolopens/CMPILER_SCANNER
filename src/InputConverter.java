@@ -42,10 +42,10 @@ public class InputConverter {
             lexer = new SHJava(input);
             Token token = lexer.nextToken();
 
-            System.out.println("RECOGNIZED TOKENS");
+//            System.out.println("RECOGNIZED TOKENS");
             while (token.getType() != SHJava.EOF) {
                 if(token.getType() != SHJava.WS && token.getType() != SHJava.INVALIDCHAR_LITERAL && token.getType() != SHJava.UnknownToken && token.getType() != SHJava.INVALIDIDENTIFIER){
-                    System.out.println(getTokenType(token) + ": " + token.getText());
+//                    System.out.println(getTokenType(token) + ": " + token.getText());
                 }
                 if(token.getType() == SHJava.INVALIDCHAR_LITERAL || token.getType() == SHJava.UnknownToken || token.getType() == SHJava.INVALIDIDENTIFIER){
                     unrecognizedTokens.add(token.getText());
