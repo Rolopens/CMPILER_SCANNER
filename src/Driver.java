@@ -36,7 +36,7 @@ public class Driver {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("\nSYNTAX ERRORS:");
+
         SHJava lexer = new SHJava(input);
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 //        System.out.println("TOKEN STREAM: \n" + tokenStream.toString());
@@ -46,10 +46,12 @@ public class Driver {
         CustomParserListener listener = new CustomParserListener();
         parser.addParseListener(listener);
 
+        System.out.println("INTERMEDIATE CODE:");
         ParseTree tree = parser.compilationUnit();
         TreeViewer viewer = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);
         viewer.open();
 
+        System.out.println("\nSYNTAX ERRORS:");
         for(int i = 0; i < listener.getList().size(); i++){
             System.out.println(listener.getList().get(i));
         }
