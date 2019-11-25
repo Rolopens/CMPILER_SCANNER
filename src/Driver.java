@@ -43,11 +43,16 @@ public class Driver {
         SHJavaParser parser = new SHJavaParser(tokenStream);
         parser.removeErrorListeners();
 //        parser.addErrorListener(CustomErrorListener.INSTANCE);
-        parser.addParseListener(CustomParserListener.INSTANCE);
+        CustomParserListener listener = new CustomParserListener();
+        parser.addParseListener(listener);
 
         ParseTree tree = parser.compilationUnit();
         TreeViewer viewer = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);
         viewer.open();
+
+        for(int i = 0; i < listener.getList().size(); i++){
+            System.out.println(listener.getList().get(i));
+        }
 
 //        MyListener listener = new MyListener();
 //
