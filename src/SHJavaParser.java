@@ -5178,7 +5178,7 @@ public class SHJavaParser extends Parser {
 					consume();
 				}
 				setState(846);
-				expression(13);
+				expression(12);
 				}
 				break;
 			case 6:
@@ -5195,7 +5195,7 @@ public class SHJavaParser extends Parser {
 					consume();
 				}
 				setState(848);
-				expression(12);
+				expression(11);
 				}
 				break;
 			case 7:
@@ -5239,7 +5239,7 @@ public class SHJavaParser extends Parser {
 						setState(855);
 						((ExpressionContext)_localctx).bop = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(_la==ADD || _la==SUB) ) {
+						if ( !(((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (MUL - 69)) | (1L << (DIV - 69)) | (1L << (MOD - 69)))) != 0)) ) {
 							((ExpressionContext)_localctx).bop = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -5256,11 +5256,11 @@ public class SHJavaParser extends Parser {
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(857);
-						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
+						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
 						setState(858);
 						((ExpressionContext)_localctx).bop = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (MUL - 69)) | (1L << (DIV - 69)) | (1L << (MOD - 69)))) != 0)) ) {
+						if ( !(_la==ADD || _la==SUB) ) {
 							((ExpressionContext)_localctx).bop = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -5269,7 +5269,7 @@ public class SHJavaParser extends Parser {
 							consume();
 						}
 						setState(859);
-						expression(12);
+						expression(15);
 						}
 						break;
 					case 3:
@@ -5461,7 +5461,7 @@ public class SHJavaParser extends Parser {
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(905);
-						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
+						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
 						setState(906);
 						((ExpressionContext)_localctx).postfix = _input.LT(1);
 						_la = _input.LA(1);
@@ -9737,7 +9737,7 @@ public class SHJavaParser extends Parser {
 		case 0:
 			return precpred(_ctx, 15);
 		case 1:
-			return precpred(_ctx, 11);
+			return precpred(_ctx, 14);
 		case 2:
 			return precpred(_ctx, 10);
 		case 3:
@@ -9759,7 +9759,7 @@ public class SHJavaParser extends Parser {
 		case 11:
 			return precpred(_ctx, 19);
 		case 12:
-			return precpred(_ctx, 14);
+			return precpred(_ctx, 13);
 		case 13:
 			return precpred(_ctx, 9);
 		}
@@ -9923,7 +9923,7 @@ public class SHJavaParser extends Parser {
 		"\u008a\u008c\u008e\u0090\u0092\u0094\u0096\u0098\u009a\u009c\u009e\u00a0"+
 		"\u00a2\u00a4\u00a6\u00a8\u00aa\u00ac\u00ae\u00b0\u00b2\u00b4\2\16\7\2"+
 		"\3\3\20\20\32\32\34\35  \6\2\3\3\13\13\35\35  \4\2\17\17\"\"\3\2CF\3\2"+
-		"9:\4\2\66\66JM\3\2EF\3\2GI\4\2\678>?\4\2==@@\3\2CD\7\2\5\5\b\b\21\21\26"+
+		"9:\4\2\66\66JM\3\2GI\3\2EF\4\2\678>?\4\2==@@\3\2CD\7\2\5\5\b\b\21\21\26"+
 		"\26!!\2\u07f6\2\u00b9\3\2\2\2\4\u00ca\3\2\2\2\6\u00cc\3\2\2\2\b\u00ce"+
 		"\3\2\2\2\n\u00d0\3\2\2\2\f\u00d2\3\2\2\2\16\u00e1\3\2\2\2\20\u00ec\3\2"+
 		"\2\2\22\u00f1\3\2\2\2\24\u00f9\3\2\2\2\26\u010b\3\2\2\2\30\u0113\3\2\2"+
@@ -10169,13 +10169,13 @@ public class SHJavaParser extends Parser {
 		"\u0346\bB\1\2\u0346\u0357\5\u0088E\2\u0347\u0357\5\u0080A\2\u0348\u0349"+
 		"\7\30\2\2\u0349\u0357\5\u008cG\2\u034a\u034b\7-\2\2\u034b\u034c\5\u009e"+
 		"P\2\u034c\u034d\7.\2\2\u034d\u034e\5\u0082B\22\u034e\u0357\3\2\2\2\u034f"+
-		"\u0350\t\5\2\2\u0350\u0357\5\u0082B\17\u0351\u0352\t\6\2\2\u0352\u0357"+
-		"\5\u0082B\16\u0353\u0354\7_\2\2\u0354\u0355\t\7\2\2\u0355\u0357\5\u0082"+
+		"\u0350\t\5\2\2\u0350\u0357\5\u0082B\16\u0351\u0352\t\6\2\2\u0352\u0357"+
+		"\5\u0082B\r\u0353\u0354\7_\2\2\u0354\u0355\t\7\2\2\u0355\u0357\5\u0082"+
 		"B\3\u0356\u0345\3\2\2\2\u0356\u0347\3\2\2\2\u0356\u0348\3\2\2\2\u0356"+
 		"\u034a\3\2\2\2\u0356\u034f\3\2\2\2\u0356\u0351\3\2\2\2\u0356\u0353\3\2"+
 		"\2\2\u0357\u0392\3\2\2\2\u0358\u0359\f\21\2\2\u0359\u035a\t\b\2\2\u035a"+
-		"\u0391\5\u0082B\22\u035b\u035c\f\r\2\2\u035c\u035d\t\t\2\2\u035d\u0391"+
-		"\5\u0082B\16\u035e\u035f\f\f\2\2\u035f\u0360\t\n\2\2\u0360\u0391\5\u0082"+
+		"\u0391\5\u0082B\22\u035b\u035c\f\20\2\2\u035c\u035d\t\t\2\2\u035d\u0391"+
+		"\5\u0082B\21\u035e\u035f\f\f\2\2\u035f\u0360\t\n\2\2\u0360\u0391\5\u0082"+
 		"B\r\u0361\u0362\f\n\2\2\u0362\u0363\t\13\2\2\u0363\u0391\5\u0082B\13\u0364"+
 		"\u0365\f\t\2\2\u0365\u0366\7V\2\2\u0366\u0391\5\u0082B\n\u0367\u0368\f"+
 		"\b\2\2\u0368\u0369\7W\2\2\u0369\u0391\5\u0082B\t\u036a\u036b\f\7\2\2\u036b"+
@@ -10189,7 +10189,7 @@ public class SHJavaParser extends Parser {
 		"\2\u0382\u0383\7\"\2\2\u0383\u0385\5\u00a4S\2\u0384\u037b\3\2\2\2\u0384"+
 		"\u037c\3\2\2\2\u0384\u037d\3\2\2\2\u0384\u0382\3\2\2\2\u0385\u0391\3\2"+
 		"\2\2\u0386\u0387\f\25\2\2\u0387\u0388\7\61\2\2\u0388\u0389\5\u0082B\2"+
-		"\u0389\u038a\7\62\2\2\u038a\u0391\3\2\2\2\u038b\u038c\f\20\2\2\u038c\u0391"+
+		"\u0389\u038a\7\62\2\2\u038a\u0391\3\2\2\2\u038b\u038c\f\17\2\2\u038c\u0391"+
 		"\t\f\2\2\u038d\u038e\f\13\2\2\u038e\u038f\7\25\2\2\u038f\u0391\5\u009e"+
 		"P\2\u0390\u0358\3\2\2\2\u0390\u035b\3\2\2\2\u0390\u035e\3\2\2\2\u0390"+
 		"\u0361\3\2\2\2\u0390\u0364\3\2\2\2\u0390\u0367\3\2\2\2\u0390\u036a\3\2"+
@@ -10206,11 +10206,11 @@ public class SHJavaParser extends Parser {
 		"\u03a7\5\u0082B\2\u03a7\u03a8\7\62\2\2\u03a8\u03e1\3\2\2\2\u03a9\u03e1"+
 		"\5\u0080A\2\u03aa\u03ab\7\30\2\2\u03ab\u03e1\5\u008cG\2\u03ac\u03ad\7"+
 		"-\2\2\u03ad\u03ae\5\u009eP\2\u03ae\u03af\7.\2\2\u03af\u03b0\5\u0082B\2"+
-		"\u03b0\u03e1\3\2\2\2\u03b1\u03b2\5\u0082B\2\u03b2\u03b3\t\b\2\2\u03b3"+
+		"\u03b0\u03e1\3\2\2\2\u03b1\u03b2\5\u0082B\2\u03b2\u03b3\t\t\2\2\u03b3"+
 		"\u03b4\5\u0082B\2\u03b4\u03e1\3\2\2\2\u03b5\u03b6\5\u0082B\2\u03b6\u03b7"+
 		"\t\f\2\2\u03b7\u03e1\3\2\2\2\u03b8\u03b9\t\5\2\2\u03b9\u03e1\5\u0082B"+
 		"\2\u03ba\u03bb\t\6\2\2\u03bb\u03e1\5\u0082B\2\u03bc\u03bd\5\u0082B\2\u03bd"+
-		"\u03be\t\t\2\2\u03be\u03bf\5\u0082B\2\u03bf\u03e1\3\2\2\2\u03c0\u03c1"+
+		"\u03be\t\b\2\2\u03be\u03bf\5\u0082B\2\u03bf\u03e1\3\2\2\2\u03c0\u03c1"+
 		"\5\u0082B\2\u03c1\u03c2\t\n\2\2\u03c2\u03c3\5\u0082B\2\u03c3\u03e1\3\2"+
 		"\2\2\u03c4\u03c5\5\u0082B\2\u03c5\u03c6\7\25\2\2\u03c6\u03c7\5\u009eP"+
 		"\2\u03c7\u03e1\3\2\2\2\u03c8\u03c9\5\u0082B\2\u03c9\u03ca\t\13\2\2\u03ca"+
@@ -10233,8 +10233,8 @@ public class SHJavaParser extends Parser {
 		"\7_\2\2\u03ef\u03f0\t\7\2\2\u03f0\u03f2\5\u0082B\2\u03f1\u03e2\3\2\2\2"+
 		"\u03f1\u03e4\3\2\2\2\u03f1\u03e5\3\2\2\2\u03f1\u03e7\3\2\2\2\u03f1\u03ec"+
 		"\3\2\2\2\u03f1\u03ee\3\2\2\2\u03f2\u042c\3\2\2\2\u03f3\u03f4\f\17\2\2"+
-		"\u03f4\u03f5\t\b\2\2\u03f5\u042b\5\u0086D\20\u03f6\u03f7\f\r\2\2\u03f7"+
-		"\u03f8\t\t\2\2\u03f8\u042b\5\u0086D\16\u03f9\u03fa\f\f\2\2\u03fa\u03fb"+
+		"\u03f4\u03f5\t\t\2\2\u03f5\u042b\5\u0086D\20\u03f6\u03f7\f\r\2\2\u03f7"+
+		"\u03f8\t\b\2\2\u03f8\u042b\5\u0086D\16\u03f9\u03fa\f\f\2\2\u03fa\u03fb"+
 		"\t\n\2\2\u03fb\u042b\5\u0086D\r\u03fc\u03fd\f\n\2\2\u03fd\u03fe\t\13\2"+
 		"\2\u03fe\u042b\5\u0086D\13\u03ff\u0400\f\t\2\2\u0400\u0401\7V\2\2\u0401"+
 		"\u042b\5\u0086D\n\u0402\u0403\f\b\2\2\u0403\u0404\7W\2\2\u0404\u042b\5"+

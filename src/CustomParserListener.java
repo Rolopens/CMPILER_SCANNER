@@ -1,13 +1,60 @@
+import java.util.ArrayList;
+import java.util.Stack;
+
+
 public class CustomParserListener extends SHJavaParserBaseListener {
 
+
     public static final CustomParserListener INSTANCE = new CustomParserListener();
+    Stack<String> values = new Stack<>();
+    ArrayList<String> expressions = new ArrayList<>();
+    int count = 0;
 
     @Override public void enterExpression(SHJavaParser.ExpressionContext ctx) {
-//        System.out.println(ctx.getText() + " Enter Rule");
+//        System.out.println(ctx.getText()  + " " + ctx.getChildCount() + " Enter Rule");
     }
 
     @Override public void exitExpression(SHJavaParser.ExpressionContext ctx) {
-//        System.out.println(ctx.getText() + " Exit Rule");
+//        System.out.println(ctx.getText()  + " " + ctx.getChildCount()+ " Exit Rule");
+        if(ctx.getChildCount() == 1 && !ctx.getChild(0).getText().contains("(")){
+//            for (int i = 0; i < ctx.getChildCount(); i++){
+//                System.out.println("CHILD COUNT: " + i + " " + ctx.getChild(i).getText());
+//            }
+            values.push("T" + count);
+            System.out.println("T" + count + " = " + ctx.getChild(0).getText());
+            count++;
+
+
+        }
+        if(ctx.getChildCount() == 3){
+//            for (int i = 0; i < ctx.getChildCount(); i++){
+////                System.out.println("CHILD COUNT: " + i + " " + ctx.getChild(i).getText());
+////            }
+            String left, right;
+            right = values.pop();
+            left = values.pop();
+            values.push("T" + count);
+            System.out.println("T" + count + " = " + left + ctx.getChild(1).getText() + right);
+            count++;
+        }
+
+    }
+
+    @Override public void enterVariableAssignment(SHJavaParser.VariableAssignmentContext ctx) { }
+
+    @Override public void exitVariableAssignment(SHJavaParser.VariableAssignmentContext ctx) {
+        if (values.empty()){
+            String left, right;
+            right = ctx.getChild(2).getText();
+            left = ctx.getChild(0).getText();
+            System.out.println("T"+count+ " = " +right);
+            System.out.println(left + " = T" + count);
+            count++;
+        } else {
+            System.out.println(ctx.getChild(0).getText() + " = " + values.pop());
+//            count++;
+        }
+//          System.out.println(ctx.getText()  + " " + ctx.getChildCount()+ " VAssignment Exit Rule");
     }
 
     @Override public void enterForControl(SHJavaParser.ForControlContext ctx) {
@@ -102,18 +149,11 @@ public class CustomParserListener extends SHJavaParserBaseListener {
     }
 
     @Override public void exitMethodCall(SHJavaParser.MethodCallContext ctx) {
-        System.out.println("METHOD CALL CHILD COUNT" + ctx.getChildCount());
-        for (int i = 0 ; i < ctx.getChildCount(); i++){
-            System.out.println("CHILD NUMBER " + i + " " + ctx.getChild(i).getText());
-        }
-        int x = 2;
-        hello();
-    }
+//        System.out.println("METHOD CALL CHILD COUNT" + ctx.getChildCount());
+//        for (int i = 0 ; i < ctx.getChildCount(); i++){
+//            System.out.println("CHILD NUMBER " + i + " " + ctx.getChild(i).getText());
+//        }
 
-
-    public int hello(int i){
-
-        return i;
     }
 
 }

@@ -53,8 +53,8 @@ public class InputConverter {
                 token = lexer.nextToken();
             }
 
-            System.out.println("\nUNRECOGNIZED TOKENS");
-            printAllUnrecognizedTokens();
+//            System.out.println("\nUNRECOGNIZED TOKENS");
+//            printAllUnrecognizedTokens();
 
     }
 

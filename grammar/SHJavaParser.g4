@@ -344,11 +344,12 @@ expression
     | methodCall
     | NEW creator
     | '(' typeType ')' expression
+    | expression bop=('*'|'/'|'%') expression
     | expression bop=('+'|'-') expression
     | expression postfix=('++' | '--')
     | prefix=('+'|'-'|'++'|'--') expression
     | prefix=('~'|'!') expression
-    | expression bop=('*'|'/'|'%') expression
+
 //    | expression ('<' '<' | '>' '>' '>' | '>' '>') expression
     | expression bop=('<=' | '>=' | '>' | '<') expression
     | expression bop=INSTANCEOF typeType
