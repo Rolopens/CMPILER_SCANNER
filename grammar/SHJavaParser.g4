@@ -376,11 +376,11 @@ comparisonExpression
     | methodCall
     | NEW creator
     | '(' typeType ')' expression
-    | expression bop=('+'|'-') expression
+
     | expression postfix=('++' | '--')
     | prefix=('+'|'-'|'++'|'--') expression
     | prefix=('~'|'!') expression
-    | expression bop=('*'|'/'|'%') expression
+
 //    | expression ('<' '<' | '>' '>' '>' | '>' '>') expression
     | expression bop=('<=' | '>=' | '>' | '<') expression
     | expression bop=INSTANCEOF typeType
@@ -390,6 +390,8 @@ comparisonExpression
     | expression bop='|' expression
     | expression bop='&&' expression
     | expression bop='||' expression
+    | expression bop=('+'|'-') expression
+    | expression bop=('*'|'/'|'%') expression
 //    | <assoc=right> expression bop='?' expression ':' expression
 //    | <assoc=right> expression bop=('=' | '+=' | '-=' | '*=' | '/=' ) expression
     ;

@@ -5547,15 +5547,12 @@ public class SHJavaParser extends Parser {
 			return getRuleContext(TypeTypeContext.class,0);
 		}
 		public TerminalNode RPAREN() { return getToken(SHJavaParser.RPAREN, 0); }
-		public TerminalNode ADD() { return getToken(SHJavaParser.ADD, 0); }
-		public TerminalNode SUB() { return getToken(SHJavaParser.SUB, 0); }
 		public TerminalNode INC() { return getToken(SHJavaParser.INC, 0); }
 		public TerminalNode DEC() { return getToken(SHJavaParser.DEC, 0); }
+		public TerminalNode ADD() { return getToken(SHJavaParser.ADD, 0); }
+		public TerminalNode SUB() { return getToken(SHJavaParser.SUB, 0); }
 		public TerminalNode TILDE() { return getToken(SHJavaParser.TILDE, 0); }
 		public TerminalNode BANG() { return getToken(SHJavaParser.BANG, 0); }
-		public TerminalNode MUL() { return getToken(SHJavaParser.MUL, 0); }
-		public TerminalNode DIV() { return getToken(SHJavaParser.DIV, 0); }
-		public TerminalNode MOD() { return getToken(SHJavaParser.MOD, 0); }
 		public TerminalNode LE() { return getToken(SHJavaParser.LE, 0); }
 		public TerminalNode GE() { return getToken(SHJavaParser.GE, 0); }
 		public TerminalNode GT() { return getToken(SHJavaParser.GT, 0); }
@@ -5568,6 +5565,9 @@ public class SHJavaParser extends Parser {
 		public TerminalNode VBAR() { return getToken(SHJavaParser.VBAR, 0); }
 		public TerminalNode AND() { return getToken(SHJavaParser.AND, 0); }
 		public TerminalNode OR() { return getToken(SHJavaParser.OR, 0); }
+		public TerminalNode MUL() { return getToken(SHJavaParser.MUL, 0); }
+		public TerminalNode DIV() { return getToken(SHJavaParser.DIV, 0); }
+		public TerminalNode MOD() { return getToken(SHJavaParser.MOD, 0); }
 		public ComparisonExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -5702,26 +5702,6 @@ public class SHJavaParser extends Parser {
 				setState(943);
 				expression(0);
 				setState(944);
-				((ComparisonExpressionContext)_localctx).bop = _input.LT(1);
-				_la = _input.LA(1);
-				if ( !(_la==ADD || _la==SUB) ) {
-					((ComparisonExpressionContext)_localctx).bop = (Token)_errHandler.recoverInline(this);
-				}
-				else {
-					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
-					_errHandler.reportMatch(this);
-					consume();
-				}
-				setState(945);
-				expression(0);
-				}
-				break;
-			case 8:
-				enterOuterAlt(_localctx, 8);
-				{
-				setState(947);
-				expression(0);
-				setState(948);
 				((ComparisonExpressionContext)_localctx).postfix = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==INC || _la==DEC) ) {
@@ -5734,10 +5714,10 @@ public class SHJavaParser extends Parser {
 				}
 				}
 				break;
-			case 9:
-				enterOuterAlt(_localctx, 9);
+			case 8:
+				enterOuterAlt(_localctx, 8);
 				{
-				setState(950);
+				setState(946);
 				((ComparisonExpressionContext)_localctx).prefix = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(((((_la - 65)) & ~0x3f) == 0 && ((1L << (_la - 65)) & ((1L << (INC - 65)) | (1L << (DEC - 65)) | (1L << (ADD - 65)) | (1L << (SUB - 65)))) != 0)) ) {
@@ -5748,14 +5728,14 @@ public class SHJavaParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(951);
+				setState(947);
 				expression(0);
 				}
 				break;
-			case 10:
-				enterOuterAlt(_localctx, 10);
+			case 9:
+				enterOuterAlt(_localctx, 9);
 				{
-				setState(952);
+				setState(948);
 				((ComparisonExpressionContext)_localctx).prefix = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==BANG || _la==TILDE) ) {
@@ -5766,7 +5746,27 @@ public class SHJavaParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(953);
+				setState(949);
+				expression(0);
+				}
+				break;
+			case 10:
+				enterOuterAlt(_localctx, 10);
+				{
+				setState(950);
+				expression(0);
+				setState(951);
+				((ComparisonExpressionContext)_localctx).bop = _input.LT(1);
+				_la = _input.LA(1);
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << GT) | (1L << LT) | (1L << LE) | (1L << GE))) != 0)) ) {
+					((ComparisonExpressionContext)_localctx).bop = (Token)_errHandler.recoverInline(this);
+				}
+				else {
+					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+					_errHandler.reportMatch(this);
+					consume();
+				}
+				setState(952);
 				expression(0);
 				}
 				break;
@@ -5776,18 +5776,9 @@ public class SHJavaParser extends Parser {
 				setState(954);
 				expression(0);
 				setState(955);
-				((ComparisonExpressionContext)_localctx).bop = _input.LT(1);
-				_la = _input.LA(1);
-				if ( !(((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (MUL - 69)) | (1L << (DIV - 69)) | (1L << (MOD - 69)))) != 0)) ) {
-					((ComparisonExpressionContext)_localctx).bop = (Token)_errHandler.recoverInline(this);
-				}
-				else {
-					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
-					_errHandler.reportMatch(this);
-					consume();
-				}
+				((ComparisonExpressionContext)_localctx).bop = match(INSTANCEOF);
 				setState(956);
-				expression(0);
+				typeType();
 				}
 				break;
 			case 12:
@@ -5798,7 +5789,7 @@ public class SHJavaParser extends Parser {
 				setState(959);
 				((ComparisonExpressionContext)_localctx).bop = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << GT) | (1L << LT) | (1L << LE) | (1L << GE))) != 0)) ) {
+				if ( !(_la==EQUAL || _la==NOTEQUAL) ) {
 					((ComparisonExpressionContext)_localctx).bop = (Token)_errHandler.recoverInline(this);
 				}
 				else {
@@ -5816,9 +5807,9 @@ public class SHJavaParser extends Parser {
 				setState(962);
 				expression(0);
 				setState(963);
-				((ComparisonExpressionContext)_localctx).bop = match(INSTANCEOF);
+				((ComparisonExpressionContext)_localctx).bop = match(AMP);
 				setState(964);
-				typeType();
+				expression(0);
 				}
 				break;
 			case 14:
@@ -5827,16 +5818,7 @@ public class SHJavaParser extends Parser {
 				setState(966);
 				expression(0);
 				setState(967);
-				((ComparisonExpressionContext)_localctx).bop = _input.LT(1);
-				_la = _input.LA(1);
-				if ( !(_la==EQUAL || _la==NOTEQUAL) ) {
-					((ComparisonExpressionContext)_localctx).bop = (Token)_errHandler.recoverInline(this);
-				}
-				else {
-					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
-					_errHandler.reportMatch(this);
-					consume();
-				}
+				((ComparisonExpressionContext)_localctx).bop = match(CARET);
 				setState(968);
 				expression(0);
 				}
@@ -5847,7 +5829,7 @@ public class SHJavaParser extends Parser {
 				setState(970);
 				expression(0);
 				setState(971);
-				((ComparisonExpressionContext)_localctx).bop = match(AMP);
+				((ComparisonExpressionContext)_localctx).bop = match(VBAR);
 				setState(972);
 				expression(0);
 				}
@@ -5858,7 +5840,7 @@ public class SHJavaParser extends Parser {
 				setState(974);
 				expression(0);
 				setState(975);
-				((ComparisonExpressionContext)_localctx).bop = match(CARET);
+				((ComparisonExpressionContext)_localctx).bop = match(AND);
 				setState(976);
 				expression(0);
 				}
@@ -5869,7 +5851,7 @@ public class SHJavaParser extends Parser {
 				setState(978);
 				expression(0);
 				setState(979);
-				((ComparisonExpressionContext)_localctx).bop = match(VBAR);
+				((ComparisonExpressionContext)_localctx).bop = match(OR);
 				setState(980);
 				expression(0);
 				}
@@ -5880,7 +5862,16 @@ public class SHJavaParser extends Parser {
 				setState(982);
 				expression(0);
 				setState(983);
-				((ComparisonExpressionContext)_localctx).bop = match(AND);
+				((ComparisonExpressionContext)_localctx).bop = _input.LT(1);
+				_la = _input.LA(1);
+				if ( !(_la==ADD || _la==SUB) ) {
+					((ComparisonExpressionContext)_localctx).bop = (Token)_errHandler.recoverInline(this);
+				}
+				else {
+					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+					_errHandler.reportMatch(this);
+					consume();
+				}
 				setState(984);
 				expression(0);
 				}
@@ -5891,7 +5882,16 @@ public class SHJavaParser extends Parser {
 				setState(986);
 				expression(0);
 				setState(987);
-				((ComparisonExpressionContext)_localctx).bop = match(OR);
+				((ComparisonExpressionContext)_localctx).bop = _input.LT(1);
+				_la = _input.LA(1);
+				if ( !(((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (MUL - 69)) | (1L << (DIV - 69)) | (1L << (MOD - 69)))) != 0)) ) {
+					((ComparisonExpressionContext)_localctx).bop = (Token)_errHandler.recoverInline(this);
+				}
+				else {
+					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+					_errHandler.reportMatch(this);
+					consume();
+				}
 				setState(988);
 				expression(0);
 				}
@@ -10206,24 +10206,24 @@ public class SHJavaParser extends Parser {
 		"\u03a7\5\u0082B\2\u03a7\u03a8\7\62\2\2\u03a8\u03e1\3\2\2\2\u03a9\u03e1"+
 		"\5\u0080A\2\u03aa\u03ab\7\30\2\2\u03ab\u03e1\5\u008cG\2\u03ac\u03ad\7"+
 		"-\2\2\u03ad\u03ae\5\u009eP\2\u03ae\u03af\7.\2\2\u03af\u03b0\5\u0082B\2"+
-		"\u03b0\u03e1\3\2\2\2\u03b1\u03b2\5\u0082B\2\u03b2\u03b3\t\t\2\2\u03b3"+
-		"\u03b4\5\u0082B\2\u03b4\u03e1\3\2\2\2\u03b5\u03b6\5\u0082B\2\u03b6\u03b7"+
-		"\t\f\2\2\u03b7\u03e1\3\2\2\2\u03b8\u03b9\t\5\2\2\u03b9\u03e1\5\u0082B"+
-		"\2\u03ba\u03bb\t\6\2\2\u03bb\u03e1\5\u0082B\2\u03bc\u03bd\5\u0082B\2\u03bd"+
-		"\u03be\t\b\2\2\u03be\u03bf\5\u0082B\2\u03bf\u03e1\3\2\2\2\u03c0\u03c1"+
-		"\5\u0082B\2\u03c1\u03c2\t\n\2\2\u03c2\u03c3\5\u0082B\2\u03c3\u03e1\3\2"+
-		"\2\2\u03c4\u03c5\5\u0082B\2\u03c5\u03c6\7\25\2\2\u03c6\u03c7\5\u009eP"+
-		"\2\u03c7\u03e1\3\2\2\2\u03c8\u03c9\5\u0082B\2\u03c9\u03ca\t\13\2\2\u03ca"+
+		"\u03b0\u03e1\3\2\2\2\u03b1\u03b2\5\u0082B\2\u03b2\u03b3\t\f\2\2\u03b3"+
+		"\u03e1\3\2\2\2\u03b4\u03b5\t\5\2\2\u03b5\u03e1\5\u0082B\2\u03b6\u03b7"+
+		"\t\6\2\2\u03b7\u03e1\5\u0082B\2\u03b8\u03b9\5\u0082B\2\u03b9\u03ba\t\n"+
+		"\2\2\u03ba\u03bb\5\u0082B\2\u03bb\u03e1\3\2\2\2\u03bc\u03bd\5\u0082B\2"+
+		"\u03bd\u03be\7\25\2\2\u03be\u03bf\5\u009eP\2\u03bf\u03e1\3\2\2\2\u03c0"+
+		"\u03c1\5\u0082B\2\u03c1\u03c2\t\13\2\2\u03c2\u03c3\5\u0082B\2\u03c3\u03e1"+
+		"\3\2\2\2\u03c4\u03c5\5\u0082B\2\u03c5\u03c6\7V\2\2\u03c6\u03c7\5\u0082"+
+		"B\2\u03c7\u03e1\3\2\2\2\u03c8\u03c9\5\u0082B\2\u03c9\u03ca\7W\2\2\u03ca"+
 		"\u03cb\5\u0082B\2\u03cb\u03e1\3\2\2\2\u03cc\u03cd\5\u0082B\2\u03cd\u03ce"+
-		"\7V\2\2\u03ce\u03cf\5\u0082B\2\u03cf\u03e1\3\2\2\2\u03d0\u03d1\5\u0082"+
-		"B\2\u03d1\u03d2\7W\2\2\u03d2\u03d3\5\u0082B\2\u03d3\u03e1\3\2\2\2\u03d4"+
-		"\u03d5\5\u0082B\2\u03d5\u03d6\7X\2\2\u03d6\u03d7\5\u0082B\2\u03d7\u03e1"+
-		"\3\2\2\2\u03d8\u03d9\5\u0082B\2\u03d9\u03da\7A\2\2\u03da\u03db\5\u0082"+
-		"B\2\u03db\u03e1\3\2\2\2\u03dc\u03dd\5\u0082B\2\u03dd\u03de\7B\2\2\u03de"+
+		"\7X\2\2\u03ce\u03cf\5\u0082B\2\u03cf\u03e1\3\2\2\2\u03d0\u03d1\5\u0082"+
+		"B\2\u03d1\u03d2\7A\2\2\u03d2\u03d3\5\u0082B\2\u03d3\u03e1\3\2\2\2\u03d4"+
+		"\u03d5\5\u0082B\2\u03d5\u03d6\7B\2\2\u03d6\u03d7\5\u0082B\2\u03d7\u03e1"+
+		"\3\2\2\2\u03d8\u03d9\5\u0082B\2\u03d9\u03da\t\t\2\2\u03da\u03db\5\u0082"+
+		"B\2\u03db\u03e1\3\2\2\2\u03dc\u03dd\5\u0082B\2\u03dd\u03de\t\b\2\2\u03de"+
 		"\u03df\5\u0082B\2\u03df\u03e1\3\2\2\2\u03e0\u0395\3\2\2\2\u03e0\u0396"+
 		"\3\2\2\2\u03e0\u03a4\3\2\2\2\u03e0\u03a9\3\2\2\2\u03e0\u03aa\3\2\2\2\u03e0"+
-		"\u03ac\3\2\2\2\u03e0\u03b1\3\2\2\2\u03e0\u03b5\3\2\2\2\u03e0\u03b8\3\2"+
-		"\2\2\u03e0\u03ba\3\2\2\2\u03e0\u03bc\3\2\2\2\u03e0\u03c0\3\2\2\2\u03e0"+
+		"\u03ac\3\2\2\2\u03e0\u03b1\3\2\2\2\u03e0\u03b4\3\2\2\2\u03e0\u03b6\3\2"+
+		"\2\2\u03e0\u03b8\3\2\2\2\u03e0\u03bc\3\2\2\2\u03e0\u03c0\3\2\2\2\u03e0"+
 		"\u03c4\3\2\2\2\u03e0\u03c8\3\2\2\2\u03e0\u03cc\3\2\2\2\u03e0\u03d0\3\2"+
 		"\2\2\u03e0\u03d4\3\2\2\2\u03e0\u03d8\3\2\2\2\u03e0\u03dc\3\2\2\2\u03e1"+
 		"\u0085\3\2\2\2\u03e2\u03e3\bD\1\2\u03e3\u03f2\5\u0088E\2\u03e4\u03f2\5"+

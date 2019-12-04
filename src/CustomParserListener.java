@@ -7,24 +7,19 @@ public class CustomParserListener extends SHJavaParserBaseListener {
 
     Stack<String> values = new Stack<>();
     ArrayList<String> commands = new ArrayList<>();
-    ArrayList<String> errors = new ArrayList<>();
-    int count = 0;
 
-    private ArrayList<String> list;
+    Stack<String> ifStatements = new Stack<>();
+    int count, jumpCount = 0;
+
 
     public CustomParserListener(){
-        list = new ArrayList<>();
+
     }
 
-    public ArrayList<String> getList() {
-        return list;
-    }
     public ArrayList<String> getCommands() {
         return commands;
     }
-    public ArrayList<String> getErrors() {
-        return errors;
-    }
+
 
     @Override public void enterExpression(SHJavaParser.ExpressionContext ctx) {
 //        System.out.println(ctx.getText()  + " " + ctx.getChildCount() + " Enter Rule");
@@ -45,8 +40,8 @@ public class CustomParserListener extends SHJavaParserBaseListener {
         }
         if(ctx.getChildCount() == 3){
 //            for (int i = 0; i < ctx.getChildCount(); i++){
-////                System.out.println("CHILD COUNT: " + i + " " + ctx.getChild(i).getText());
-////            }
+//                System.out.println("CHILD COUNT: " + i + " " + ctx.getChild(i).getText());}
+//            }
             String left, right;
             right = values.pop();
             left = values.pop();
@@ -55,6 +50,7 @@ public class CustomParserListener extends SHJavaParserBaseListener {
             commands.add("T" + count + " = " + left + ctx.getChild(1).getText() + right);
             count++;
         }
+
 
     }
 
@@ -83,51 +79,32 @@ public class CustomParserListener extends SHJavaParserBaseListener {
 //        System.out.println(ctx.getText() + " Enter Rule");
     }
 
-    @Override public void enterPrimaryError(SHJavaParser.PrimaryErrorContext ctx) {
-//        System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Not a Statement");
-        errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Not a Statement");
-    }
+    @Override public void enterPrimaryError(SHJavaParser.PrimaryErrorContext ctx) {}
 
-    @Override public void enterInvalidPrintStatmentPlus(SHJavaParser.InvalidPrintStatmentPlusContext ctx) {
-//        System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Extraneous '+' symbol");
-        errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Extraneous '+' symbol");
-    }
+    @Override public void enterInvalidPrintStatmentPlus(SHJavaParser.InvalidPrintStatmentPlusContext ctx) {}
 
-    @Override public void enterInvalidPrintStatmentExpression(SHJavaParser.InvalidPrintStatmentExpressionContext ctx) {
-//        System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Invalid Expression");
-        errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Invalid Expression");
-    }
+    @Override public void enterInvalidPrintStatmentExpression(SHJavaParser.InvalidPrintStatmentExpressionContext ctx) {}
 
-    @Override public void enterInvalidPrintStatmentLackingQuotations(SHJavaParser.InvalidPrintStatmentLackingQuotationsContext ctx) {
-//        System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Lacking Quotation Marks");
-        errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Lacking Quotation Marks");
-    }
+    @Override public void enterInvalidPrintStatmentLackingQuotations(SHJavaParser.InvalidPrintStatmentLackingQuotationsContext ctx) {}
 
     @Override public void exitComparisonExpression(SHJavaParser.ComparisonExpressionContext ctx) {
-        if (ctx.getChildCount() == 0 ){
-//            System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Comparison Expression");
-            errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Comparison Expression");
+        if(ctx.getChildCount() == 3){
+//            for (int i = 0; i < ctx.getChildCount(); i++){
+//                System.out.println("CHILD COUNT: " + i + " " + ctx.getChild(i).getText());}
+//            }
+            String left, right;
+            right = values.pop();
+            left = values.pop();
+            values.push("T" + count);
+//            System.out.println("T" + count + " = " + left + ctx.getChild(1).getText() + right);
+            commands.add("T" + count + " = " + left + ctx.getChild(1).getText() + right);
+            count++;
         }
     }
     @Override public void enterForWrongDeclaration(SHJavaParser.ForWrongDeclarationContext ctx) {
-        System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Declaration within dur Loop");
-        errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Declaration within dur Loop");
     }
 
     @Override public void exitEveryRule(ParserRuleContext ctx) {
-        for (int i = 0 ; i < ctx.getChildCount(); i++){
-            if(ctx.getChild(i).getText().contains("missing") && (ctx.getChild(i).getText().length() < 14)){
-                String temp = "[ERROR] LINE " + ctx.getStart().getLine() + " : Missing '" + ctx.getChild(i).getText
-                        ().split("'")[1] + "'";
-                if(!list.contains(temp)){
-                    list.add(temp);
-                }
-            }
-//            if(ctx.getChild(i).getText().contains("missing")){
-//                System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Missing '" + ctx.getChild(i).getText
-//                        ().split("'")[1] + "'");
-//            }
-        }
     }
 
 
@@ -249,7 +226,23 @@ public class CustomParserListener extends SHJavaParserBaseListener {
 
     @Override public void exitLocalTypeDeclaration(SHJavaParser.LocalTypeDeclarationContext ctx) { }
 
-    @Override public void exitStatement(SHJavaParser.StatementContext ctx) { }
+    @Override public void enterStatement(SHJavaParser.StatementContext ctx) {
+
+    }
+
+    @Override public void exitStatement(SHJavaParser.StatementContext ctx) {
+        if(!ifStatements.empty()){
+            commands.add(ifStatements.pop() + ": ");
+        }
+        if(ctx.getChildCount() > 3){
+//            for(int i = 0; i < ctx.getChildCount(); i++){
+//                System.out.println(ctx.getChild(i).getText());
+//            }
+
+//            commands.add("TEST : " + ctx.getChild(3));
+        }
+//        commands.add("Exit STATEMNET: "+ ctx.getChildCount());
+    }
 
     @Override public void exitSwitchBlockStatementGroup(SHJavaParser.SwitchBlockStatementGroupContext ctx) { }
 
@@ -263,7 +256,21 @@ public class CustomParserListener extends SHJavaParserBaseListener {
 
     @Override public void exitEnhancedForControl(SHJavaParser.EnhancedForControlContext ctx) { }
 
-    @Override public void exitParExpression(SHJavaParser.ParExpressionContext ctx) { }
+    @Override public void enterParExpression(SHJavaParser.ParExpressionContext ctx){
+
+    }
+
+    @Override public void exitParExpression(SHJavaParser.ParExpressionContext ctx) {
+        if(ctx.getChildCount() == 3 && !values.empty()){
+//            commands.add("Child 1:" + ctx.getChild(0).getText() + "Child 2:" + ctx.getChild(1).getText() + "Child 3:" + ctx.getChild(2).getText());
+//            commands.add(values.pop());
+//            commands.add("DJHIUYUHFKEAJLK");
+            commands.add("IfZ " + values.pop() + " GOTO L" + jumpCount);
+            ifStatements.push("L" + jumpCount);
+
+            jumpCount++;
+        }
+    }
 
     @Override public void exitExpressionList(SHJavaParser.ExpressionListContext ctx) { }
 

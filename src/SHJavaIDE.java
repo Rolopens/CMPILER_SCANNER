@@ -77,7 +77,7 @@ public class SHJavaIDE extends JFrame{
                 SHJavaParser parser = new SHJavaParser(tokenStream);
                 parser.removeErrorListeners();
 //        parser.addErrorListener(CustomErrorListener.INSTANCE);
-                CustomParserListener listener = new CustomParserListener();
+                CustomErrorListener listener = new CustomErrorListener();
                 parser.addParseListener(listener);
 
 //                System.out.println("INTERMEDIATE CODE:");
@@ -91,7 +91,7 @@ public class SHJavaIDE extends JFrame{
 //                    System.out.println(listener.getErrors().get(i));
                 }
                 for(int i = 0; i < listener.getList().size(); i++){
-                    textArea3.append(listener.getErrors().get(i) + " \n");
+                    textArea3.append(listener.getList().get(i) + " \n");
 //                    System.out.println(listener.getList().get(i));
                 }
 

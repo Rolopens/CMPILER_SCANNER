@@ -4,6 +4,11 @@ pub cla DemoClass
      int i;
      i = 2 + 3 * 5;
      out("Rolo " + i);
-     out("ian" ++);
+     out("ian");
+iif(a < b + c){
+	out(i);
+} els {
+	out(i);
+}
       }
  }
