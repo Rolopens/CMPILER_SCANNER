@@ -17,44 +17,11 @@ import javax.swing.*;
 public class Driver {
 
     public static void main(String[] args){
-        //declare variables
-        String filepath = "./input.txt";
-        InputConverter converter = new InputConverter();
-        try {
-            CharStream input = CharStreams.fromFileName(filepath);
-            converter.displayTokenClass(input);
+        SHJavaIDE frame = new SHJavaIDE();
+        frame.setVisible(true);
+//        frame.runCode();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e){
-            e.printStackTrace();
-        }
 
-        CharStream input = null;
-        try {
-            input = CharStreams.fromFileName(filepath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        SHJava lexer = new SHJava(input);
-        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-//        System.out.println("TOKEN STREAM: \n" + tokenStream.toString());
-        SHJavaParser parser = new SHJavaParser(tokenStream);
-        parser.removeErrorListeners();
-//        parser.addErrorListener(CustomErrorListener.INSTANCE);
-        CustomParserListener listener = new CustomParserListener();
-        parser.addParseListener(listener);
-
-        System.out.println("INTERMEDIATE CODE:");
-        ParseTree tree = parser.compilationUnit();
-        TreeViewer viewer = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);
-        viewer.open();
-
-        System.out.println("\nSYNTAX ERRORS:");
-        for(int i = 0; i < listener.getList().size(); i++){
-            System.out.println(listener.getList().get(i));
-        }
 
 //        MyListener listener = new MyListener();
 //

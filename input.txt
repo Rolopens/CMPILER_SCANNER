@@ -1,25 +1,9 @@
 pub cla DemoClass
  {
      voi testOne() {
-     out("Hello " +x+);
-     out(x is a very huge number);
-     out(x is a very huge number");
-     out(x+=1);
-     out("Tadhg" + x12);
-     x;
-     iif(x == 4)//syntax error #4
-               	{
-
-               	}
-      whi(x=5){
-
+     int i;
+     i = 2 + 3 * 5;
+     out("Rolo " + i);
+     out("ian" ++);
       }
-      whi(x==5){
-
-      }
-      dur(dec i; i < 10; i += 1) {
-
-      }
-        this.tesTwo(123 +=1);
-        this.testTwo(345);
  }

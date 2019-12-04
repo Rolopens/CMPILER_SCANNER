@@ -6,7 +6,8 @@ import java.util.Stack;
 public class CustomParserListener extends SHJavaParserBaseListener {
 
     Stack<String> values = new Stack<>();
-    ArrayList<String> expressions = new ArrayList<>();
+    ArrayList<String> commands = new ArrayList<>();
+    ArrayList<String> errors = new ArrayList<>();
     int count = 0;
 
     private ArrayList<String> list;
@@ -18,6 +19,12 @@ public class CustomParserListener extends SHJavaParserBaseListener {
     public ArrayList<String> getList() {
         return list;
     }
+    public ArrayList<String> getCommands() {
+        return commands;
+    }
+    public ArrayList<String> getErrors() {
+        return errors;
+    }
 
     @Override public void enterExpression(SHJavaParser.ExpressionContext ctx) {
 //        System.out.println(ctx.getText()  + " " + ctx.getChildCount() + " Enter Rule");
@@ -25,12 +32,13 @@ public class CustomParserListener extends SHJavaParserBaseListener {
 
     @Override public void exitExpression(SHJavaParser.ExpressionContext ctx) {
 //        System.out.println(ctx.getText()  + " " + ctx.getChildCount()+ " Exit Rule");
-        if(ctx.getChildCount() == 1 && !ctx.getChild(0).getText().contains("(")){
+        if(ctx.getChildCount() == 1 && !ctx.getChild(0).getText().contains("(") &&  !ctx.getChild(0).getText().contains(")")){
 //            for (int i = 0; i < ctx.getChildCount(); i++){
 //                System.out.println("CHILD COUNT: " + i + " " + ctx.getChild(i).getText());
 //            }
             values.push("T" + count);
-            System.out.println("T" + count + " = " + ctx.getChild(0).getText());
+//            System.out.println("T" + count + " = " + ctx.getChild(0).getText());
+            commands.add("T" + count + " = " + ctx.getChild(0).getText());
             count++;
 
 
@@ -43,7 +51,8 @@ public class CustomParserListener extends SHJavaParserBaseListener {
             right = values.pop();
             left = values.pop();
             values.push("T" + count);
-            System.out.println("T" + count + " = " + left + ctx.getChild(1).getText() + right);
+//            System.out.println("T" + count + " = " + left + ctx.getChild(1).getText() + right);
+            commands.add("T" + count + " = " + left + ctx.getChild(1).getText() + right);
             count++;
         }
 
@@ -52,15 +61,19 @@ public class CustomParserListener extends SHJavaParserBaseListener {
     @Override public void enterVariableAssignment(SHJavaParser.VariableAssignmentContext ctx) { }
 
     @Override public void exitVariableAssignment(SHJavaParser.VariableAssignmentContext ctx) {
-        if (values.empty()){
+        if (values.empty() && ctx.getChildCount() == 3){
             String left, right;
             right = ctx.getChild(2).getText();
             left = ctx.getChild(0).getText();
-            System.out.println("T"+count+ " = " +right);
-            System.out.println(left + " = T" + count);
+//            System.out.println("T"+count+ " = " +right);
+            commands.add("T"+count+ " = " +right);
+//            System.out.println(left + " = T" + count);
+            commands.add(left + " = T" + count);
             count++;
         } else {
-            System.out.println(ctx.getChild(0).getText() + " = " + values.pop());
+            String str = ctx.getChild(0).getText() + " = " + values.pop();
+//            System.out.println(str);
+            commands.add(str);
 //            count++;
         }
 //          System.out.println(ctx.getText()  + " " + ctx.getChildCount()+ " VAssignment Exit Rule");
@@ -71,29 +84,34 @@ public class CustomParserListener extends SHJavaParserBaseListener {
     }
 
     @Override public void enterPrimaryError(SHJavaParser.PrimaryErrorContext ctx) {
-        System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Not a Statement");
-
+//        System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Not a Statement");
+        errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Not a Statement");
     }
 
     @Override public void enterInvalidPrintStatmentPlus(SHJavaParser.InvalidPrintStatmentPlusContext ctx) {
-        System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Extraneous '+' symbol");
+//        System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Extraneous '+' symbol");
+        errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Extraneous '+' symbol");
     }
 
     @Override public void enterInvalidPrintStatmentExpression(SHJavaParser.InvalidPrintStatmentExpressionContext ctx) {
-        System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Invalid Expression");
+//        System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Invalid Expression");
+        errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Invalid Expression");
     }
 
     @Override public void enterInvalidPrintStatmentLackingQuotations(SHJavaParser.InvalidPrintStatmentLackingQuotationsContext ctx) {
-        System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Lacking Quotation Marks");
+//        System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Lacking Quotation Marks");
+        errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Print Statement - Lacking Quotation Marks");
     }
 
     @Override public void exitComparisonExpression(SHJavaParser.ComparisonExpressionContext ctx) {
         if (ctx.getChildCount() == 0 ){
-            System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Comparison Expression");
+//            System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Comparison Expression");
+            errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Comparison Expression");
         }
     }
     @Override public void enterForWrongDeclaration(SHJavaParser.ForWrongDeclarationContext ctx) {
         System.out.println("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Declaration within dur Loop");
+        errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Invalid Declaration within dur Loop");
     }
 
     @Override public void exitEveryRule(ParserRuleContext ctx) {
@@ -179,7 +197,23 @@ public class CustomParserListener extends SHJavaParserBaseListener {
 
     @Override public void exitVariableDeclarators(SHJavaParser.VariableDeclaratorsContext ctx) { }
 
-    @Override public void exitVariableDeclarator(SHJavaParser.VariableDeclaratorContext ctx) { }
+    @Override public void exitVariableDeclarator(SHJavaParser.VariableDeclaratorContext ctx) {
+        if (values.empty()  && ctx.getChildCount() == 3){
+            String left, right;
+            right = ctx.getChild(2).getText();
+            left = ctx.getChild(0).getText();
+//            System.out.println("T"+count+ " = " +right);
+            commands.add("T"+count+ " = " +right);
+//            System.out.println(left + " = T" + count);
+            commands.add(left + " = T" + count);
+            count++;
+        }
+        else if (!values.empty()){
+            String str = ctx.getChild(0).getText() + " = " + values.pop();
+//            System.out.println(str);
+            commands.add(str);
+        }
+    }
 
     @Override public void exitVariableDeclaratorId(SHJavaParser.VariableDeclaratorIdContext ctx) { }
 
@@ -271,7 +305,17 @@ public class CustomParserListener extends SHJavaParserBaseListener {
 
     @Override public void exitScanStatement(SHJavaParser.ScanStatementContext ctx) { }
 
-    @Override public void exitPrintStatement(SHJavaParser.PrintStatementContext ctx) { }
+    @Override public void exitPrintStatement(SHJavaParser.PrintStatementContext ctx) {
+        if(!values.empty()) {
+            String str = "print " + values.pop();
+//            System.out.println(str);
+            commands.add(str);
+        } else if (ctx.getChildCount() == 4 && ctx.getChild(2).getText().contains("\"")){
+//            System.out.println("print " + ctx.getChild(2).getText());
+            commands.add("print " + ctx.getChild(2).getText());
+        }
+
+    }
 
     @Override public void exitPrimaryError(SHJavaParser.PrimaryErrorContext ctx) { }
 
