@@ -537,6 +537,56 @@ public interface SHJavaParserListener extends ParseTreeListener {
 	 */
 	void exitStatement(SHJavaParser.StatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#ifStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfStatement(SHJavaParser.IfStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#ifStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfStatement(SHJavaParser.IfStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#elseStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterElseStatement(SHJavaParser.ElseStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#elseStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitElseStatement(SHJavaParser.ElseStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#forStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterForStatement(SHJavaParser.ForStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#forStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitForStatement(SHJavaParser.ForStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#whileStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhileStatement(SHJavaParser.WhileStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#whileStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhileStatement(SHJavaParser.WhileStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SHJavaParser#doWhileStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterDoWhileStatement(SHJavaParser.DoWhileStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SHJavaParser#doWhileStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitDoWhileStatement(SHJavaParser.DoWhileStatementContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SHJavaParser#switchBlockStatementGroup}.
 	 * @param ctx the parse tree
 	 */

@@ -261,10 +261,10 @@ localTypeDeclaration
 statement
     : blockLabel=block
     | ASSERT expression (':' expression)? ';'
-    | IF parExpression statement (ELSE statement)?
-    | FOR '(' forControl ')' statement
-    | WHILE parExpression statement
-    | DO statement WHILE parExpression ';'
+    | ifStatement
+    | forStatement
+    | whileStatement
+    | doWhileStatement
     | SWITCH parExpression '{' switchBlockStatementGroup* switchLabel* '}'
     | RETURN expression? ';'
     | BREAK IDENTIFIER? ';'
@@ -277,6 +277,26 @@ statement
     | invalidPrintStatmentLackingQuotations ';'
     | printStatement ';'
     | scanStatement ';'
+    ;
+
+ifStatement
+    :IF parExpression statement (elseStatement)?
+    ;
+
+elseStatement
+    : ELSE statement
+    ;
+
+forStatement
+    : FOR '(' forControl ')' statement
+    ;
+
+whileStatement
+    : WHILE parExpression statement
+    ;
+
+doWhileStatement
+    : DO statement WHILE parExpression ';'
     ;
 
 switchBlockStatementGroup

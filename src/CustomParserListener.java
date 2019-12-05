@@ -9,7 +9,11 @@ public class CustomParserListener extends SHJavaParserBaseListener {
     ArrayList<String> commands = new ArrayList<>();
 
     Stack<String> ifStatements = new Stack<>();
+    Stack<String> whiStatements = new Stack<>();
+    Stack<String> forStatements = new Stack<>();
+    Stack<String> doWhiStatements = new Stack<>();
     int count, jumpCount = 0;
+    String prev, forPrev = null;
 
 
     public CustomParserListener(){
@@ -38,12 +42,13 @@ public class CustomParserListener extends SHJavaParserBaseListener {
 
 
         }
-        if(ctx.getChildCount() == 3){
+        if(ctx.getChildCount() == 3 && values.size() > 1){
 //            for (int i = 0; i < ctx.getChildCount(); i++){
 //                System.out.println("CHILD COUNT: " + i + " " + ctx.getChild(i).getText());}
 //            }
             String left, right;
             right = values.pop();
+
             left = values.pop();
             values.push("T" + count);
 //            System.out.println("T" + count + " = " + left + ctx.getChild(1).getText() + right);
@@ -100,7 +105,39 @@ public class CustomParserListener extends SHJavaParserBaseListener {
             commands.add("T" + count + " = " + left + ctx.getChild(1).getText() + right);
             count++;
         }
+        if(!forStatements.empty()){
+            commands.add("IfZ " + values.peek() + " GOTO L" + jumpCount);
+//            commands.add(values.peek());
+            forPrev = forStatements.peek();
+            forStatements.push("L" + jumpCount);
+
+            jumpCount++;
+        }
+        if(!doWhiStatements.empty()){
+            commands.add("IfZ " + values.pop() + " GOTO L" + jumpCount);
+            commands.add("GOTO " + doWhiStatements.pop());
+            commands.add("L" + jumpCount + ":");
+            jumpCount++;
+        }
     }
+
+    @Override public void exitForStatement(SHJavaParser.ForStatementContext ctx) {
+        if(!forStatements.empty()){
+            commands.add("GOTO " + forPrev);
+            commands.add(forStatements.pop() + ":");
+//            int i = commands.indexOf(forStatements.pop())
+            forStatements.pop();
+
+
+        }
+    }
+
+    @Override public void enterDoWhileStatement(SHJavaParser.DoWhileStatementContext ctx){
+        commands.add("L" + jumpCount + ":");
+        doWhiStatements.push("L" + jumpCount);
+        jumpCount++;
+    }
+
     @Override public void enterForWrongDeclaration(SHJavaParser.ForWrongDeclarationContext ctx) {
     }
 
@@ -144,7 +181,18 @@ public class CustomParserListener extends SHJavaParserBaseListener {
 
     @Override public void exitMemberDeclaration(SHJavaParser.MemberDeclarationContext ctx) { }
 
-    @Override public void exitMethodDeclaration(SHJavaParser.MethodDeclarationContext ctx) { }
+    @Override public void exitMethodDeclaration(SHJavaParser.MethodDeclarationContext ctx) {
+        if(ctx.getChildCount()==4 ){
+            int i = commands.indexOf("TEMP METHOD NAME");
+            commands.add("ENDFUNC");
+            commands.set(i, "_"+ ctx.getChild(1).getText()+":");
+        }
+    }
+
+    @Override public void enterMethodDeclaration(SHJavaParser.MethodDeclarationContext ctx) {
+        commands.add("TEMP METHOD NAME");
+        commands.add("BEGINFUNC");
+    }
 
     @Override public void exitMethodBody(SHJavaParser.MethodBodyContext ctx) { }
 
@@ -230,18 +278,40 @@ public class CustomParserListener extends SHJavaParserBaseListener {
 
     }
 
-    @Override public void exitStatement(SHJavaParser.StatementContext ctx) {
-        if(!ifStatements.empty()){
-            commands.add(ifStatements.pop() + ": ");
-        }
-        if(ctx.getChildCount() > 3){
-//            for(int i = 0; i < ctx.getChildCount(); i++){
-//                System.out.println(ctx.getChild(i).getText());
-//            }
+    @Override public void enterElseStatement(SHJavaParser.ElseStatementContext ctx){
+        int indexOfL = commands.indexOf(prev);
+        commands.add(indexOfL, "GOTO L" + jumpCount);
+        ifStatements.push("L" + jumpCount);
+        jumpCount++;
 
-//            commands.add("TEST : " + ctx.getChild(3));
+    }
+
+    @Override public void exitElseStatement(SHJavaParser.ElseStatementContext ctx){
+//        if(!ifStatements.empty()){
+//            commands.add("GOTO L" + jumpCount);
+//            commands.add(ifStatements.pop() + ": ");
+//            ifStatements.push("L"+jumpCount);
+//        }
+        if(!ifStatements.empty())
+            commands.add(ifStatements.pop() + "");
+
+    }
+
+    @Override public void exitStatement(SHJavaParser.StatementContext ctx) {
+        if(!ifStatements.empty() && whiStatements.empty()){
+//            commands.add("GOTO L" + jumpCount);
+            String str = ifStatements.pop() + ":";
+            commands.add(str);
+            prev = str;
+//            ifStatements.push("L"+jumpCount);
         }
-//        commands.add("Exit STATEMNET: "+ ctx.getChildCount());
+        if(!whiStatements.empty()){
+            String str = "GOTO " + whiStatements.pop();
+            commands.add(str);
+        }
+        if(ctx.getChildCount() == 3 && !values.empty()){
+            commands.add("RETURN " + values.pop());
+        }
     }
 
     @Override public void exitSwitchBlockStatementGroup(SHJavaParser.SwitchBlockStatementGroupContext ctx) { }
@@ -252,7 +322,19 @@ public class CustomParserListener extends SHJavaParserBaseListener {
 
     @Override public void exitForInit(SHJavaParser.ForInitContext ctx) { }
 
-    @Override public void exitForDeclaration(SHJavaParser.ForDeclarationContext ctx) { }
+    @Override public void exitForDeclaration(SHJavaParser.ForDeclarationContext ctx) {
+        if(ctx.getChildCount()== 4){
+            String left, right;
+            left = ctx.getChild(1).getText();
+            right = ctx.getChild(3).getText();
+            commands.add("T"+ count + " = " + right);
+            commands.add(left + " = T" + count);
+            count++;
+            commands.add("L" + jumpCount + ":");
+            forStatements.add("L" + jumpCount);
+            jumpCount++;
+        }
+    }
 
     @Override public void exitEnhancedForControl(SHJavaParser.EnhancedForControlContext ctx) { }
 
@@ -272,13 +354,44 @@ public class CustomParserListener extends SHJavaParserBaseListener {
         }
     }
 
+    @Override public void enterWhileStatement(SHJavaParser.WhileStatementContext ctx){
+        commands.add("L" + jumpCount + ":");
+        whiStatements.push("L" + jumpCount);
+        jumpCount++;
+    }
+
+    @Override public void exitWhileStatement(SHJavaParser.WhileStatementContext ctx){
+
+    }
+
+
     @Override public void exitExpressionList(SHJavaParser.ExpressionListContext ctx) { }
 
-    @Override public void exitMethodExpressionList(SHJavaParser.MethodExpressionListContext ctx) { }
+    @Override public void exitMethodExpressionList(SHJavaParser.MethodExpressionListContext ctx) {
+        if(ctx.getChildCount() % 2 == 1){
+            for (int i = 0; i < ctx.getChildCount(); i = i + 2){
+                commands.add("PUSHPARAMS " + ctx.getChild(i).getText());
+            }
+        }
+    }
 
     @Override public void exitMethodExpression(SHJavaParser.MethodExpressionContext ctx) { }
 
-    @Override public void exitPrimary(SHJavaParser.PrimaryContext ctx) { }
+    @Override public void exitPrimary(SHJavaParser.PrimaryContext ctx) {
+
+        if(ctx.getChildCount() == 1 && ctx.getParent().getParent().getParent() instanceof SHJavaParser.StatementContext
+        && !(ctx.getParent().getParent() instanceof SHJavaParser.PrintStatementContext) && !(ctx.getParent().getParent() instanceof SHJavaParser.ExpressionContext)){
+//            System.out.println(ctx.getParent().getParent().getClass());
+            commands.add("PUSHPARAMS " + ctx.getChild(0).getText());
+        }
+
+    }
+
+    @Override public void exitMethodCall(SHJavaParser.MethodCallContext ctx){
+        if(ctx.getChildCount() == 4 || ctx.getChildCount() == 3){
+            commands.add("CALL " + ctx.getChild(0).getText());
+        }
+    }
 
     @Override public void exitClassType(SHJavaParser.ClassTypeContext ctx) { }
 
