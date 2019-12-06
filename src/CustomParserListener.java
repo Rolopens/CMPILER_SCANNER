@@ -1,19 +1,21 @@
 import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 
 
 public class CustomParserListener extends SHJavaParserBaseListener {
 
-    Stack<String> values = new Stack<>();
-    ArrayList<String> commands = new ArrayList<>();
-
-    Stack<String> ifStatements = new Stack<>();
-    Stack<String> whiStatements = new Stack<>();
-    Stack<String> forStatements = new Stack<>();
-    Stack<String> doWhiStatements = new Stack<>();
+    private Stack<String> values = new Stack<>();
+    private ArrayList<String> commands = new ArrayList<>();
+    private HashMap<String, ArrayList<String>> functionScopes = new HashMap<String, ArrayList<String>>();
+    private Stack<String> ifStatements = new Stack<>();
+    private Stack<String> whiStatements = new Stack<>();
+    private Stack<String> forStatements = new Stack<>();
+    private Stack<String> doWhiStatements = new Stack<>();
+    private Stack<String> funcNames = new Stack<>();
     int count, jumpCount = 0;
-    String prev, forPrev = null;
+    private String prev, forPrev, curClass = null;
 
 
     public CustomParserListener(){
@@ -31,16 +33,22 @@ public class CustomParserListener extends SHJavaParserBaseListener {
 
     @Override public void exitExpression(SHJavaParser.ExpressionContext ctx) {
 //        System.out.println(ctx.getText()  + " " + ctx.getChildCount()+ " Exit Rule");
-        if(ctx.getChildCount() == 1 && !ctx.getChild(0).getText().contains("(") &&  !ctx.getChild(0).getText().contains(")")){
+        if(ctx.getChildCount() == 1 && !ctx.getChild(0).getText().contains("(") &&  !ctx.getChild(0).getText().contains(")")
+        && ctx.getParent() instanceof SHJavaParser.VariableInitializerContext){
 //            for (int i = 0; i < ctx.getChildCount(); i++){
 //                System.out.println("CHILD COUNT: " + i + " " + ctx.getChild(i).getText());
 //            }
             values.push("T" + count);
+
 //            System.out.println("T" + count + " = " + ctx.getChild(0).getText());
             commands.add("T" + count + " = " + ctx.getChild(0).getText());
+//            commands.add(ctx.getParent().getClass().toString());
             count++;
 
 
+        } else if (ctx.getChildCount() == 1 && !ctx.getChild(0).getText().contains("(") &&  !ctx.getChild(0).getText().contains(")")
+                && ctx.getParent() instanceof SHJavaParser.StatementContext){
+            commands.add("PUSHPARAMS " + ctx.getChild(0).getText());
         }
         if(ctx.getChildCount() == 3 && values.size() > 1){
 //            for (int i = 0; i < ctx.getChildCount(); i++){
@@ -155,7 +163,49 @@ public class CustomParserListener extends SHJavaParserBaseListener {
 
     @Override public void exitVariableModifier(SHJavaParser.VariableModifierContext ctx) { }
 
-    @Override public void exitClassDeclaration(SHJavaParser.ClassDeclarationContext ctx) { }
+    @Override public void enterClassDeclaration(SHJavaParser.ClassDeclarationContext ctx) { }
+
+    @Override public void exitClassDeclaration(SHJavaParser.ClassDeclarationContext ctx) {
+        if(ctx.getChildCount() % 2 == 1 && !funcNames.empty()){
+            if (functionScopes.get(ctx.getChild(1).getText()) == null) {
+                String curFunc;
+                int i;
+                ArrayList<String> funcs = new ArrayList<>();
+                functionScopes.put(ctx.getChild(1).getText(), new ArrayList<String>());
+
+                while(!funcNames.empty()){
+                    curFunc = funcNames.pop();
+                    i = commands.indexOf("TEMP."+curFunc);
+                    commands.set(i, "_" + ctx.getChild(1).getText() + "." + curFunc+":");
+                    funcs.add("_" + ctx.getChild(1).getText() + "." + curFunc);
+                }
+                commands.add("VTABLE " + ctx.getChild(1).getText()  + " =");
+                for(int x = 0; x < funcs.size(); x++){
+                    functionScopes.get(ctx.getChild(1).getText()).add(funcs.get(x));
+                    commands.add("\t _" + funcs.get(x) + ",");
+                }
+
+            }
+
+            if(ctx.getChildCount() >= 5){
+                for ( int i = 3; i < ctx.getChildCount(); i+= 2){
+                    ArrayList<String> funcs;
+                    funcs = functionScopes.get(ctx.getChild(i).getText());
+                    if(funcs == null){
+//                        System.out.println(ctx.getChild(i).getText());
+//                        System.out.println(functionScopes.keySet());
+                    } else {
+                        for(int j = 0; j < funcs.size(); j++){
+                            commands.add("\t _" +funcs.get(j)+",");
+                        }
+                    }
+
+                }
+//                System.out.println(ctx.getChild(3).getText());
+            }
+        }
+
+    }
 
     @Override public void exitTypeParameters(SHJavaParser.TypeParametersContext ctx) { }
 
@@ -185,7 +235,9 @@ public class CustomParserListener extends SHJavaParserBaseListener {
         if(ctx.getChildCount()==4 ){
             int i = commands.indexOf("TEMP METHOD NAME");
             commands.add("ENDFUNC");
-            commands.set(i, "_"+ ctx.getChild(1).getText()+":");
+            String str = "_"+ ctx.getChild(1).getText();
+            commands.set(i, "TEMP." + str);
+            funcNames.push(str);
         }
     }
 
