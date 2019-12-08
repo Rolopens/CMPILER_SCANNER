@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
-
 public class CustomParserListener extends SHJavaParserBaseListener {
 
     private Stack<String> values = new Stack<>();
@@ -14,6 +13,7 @@ public class CustomParserListener extends SHJavaParserBaseListener {
     private Stack<String> forStatements = new Stack<>();
     private Stack<String> doWhiStatements = new Stack<>();
     private Stack<String> funcNames = new Stack<>();
+    private Stack<String> arraySize = new Stack<>();
     int count, jumpCount = 0;
     private String prev, forPrev, curClass = null;
     private String fileName = null;
@@ -21,20 +21,36 @@ public class CustomParserListener extends SHJavaParserBaseListener {
     public ArrayList<String> getCommands() {
         return commands;
     }
+    public String getFileName(){
+        return fileName;
+    }
+
+//    @Override public void enterTypeDeclaration(SHJavaParser.TypeDeclarationContext ctx) {
+//        if (ctx.getChildCount() == 2){
+//            if(ctx.getChild(1) instanceof SHJavaParser.ClassDeclarationContext){
+//                fileName = ctx.getChild(1).getChild(1).getText();
+//            }
+//        }
+//    }
 
     @Override public void exitExpression(SHJavaParser.ExpressionContext ctx) {
         if(ctx.getChildCount() == 1 && !ctx.getChild(0).getText().contains("(") &&  !ctx.getChild(0).getText().contains(")")
         ){
-            values.push("T" + count);
-//&& ctx.getParent() instanceof SHJavaParser.VariableInitializerContext
-            commands.add("T" + count + " = " + ctx.getChild(0).getText());
-            count++;
 
+            if(ctx.getParent() instanceof SHJavaParser.ArrayCreatorRestContext){
+                arraySize.push(ctx.getChild(0).getText());
+            } else {
+                values.push("T" + count);
+//&& ctx.getParent() instanceof SHJavaParser.VariableInitializerContext
+                commands.add("T" + count + " = " + ctx.getChild(0).getText());
+                count++;
+            }
 
         } else if (ctx.getChildCount() == 1 && !ctx.getChild(0).getText().contains("(") &&  !ctx.getChild(0).getText().contains(")")
                 && ctx.getParent() instanceof SHJavaParser.StatementContext){
             commands.add("PUSHPARAMS " + ctx.getChild(0).getText());
         }
+
         if(ctx.getChildCount() == 3 && values.size() > 1){
 //            System.out.println("ETNERED HERE");
             String left, right;
@@ -47,6 +63,31 @@ public class CustomParserListener extends SHJavaParserBaseListener {
         }
 
 
+    }
+
+    @Override public void exitArrayCreatorRest(SHJavaParser.ArrayCreatorRestContext ctx) {
+        if(!arraySize.empty()){
+            commands.add("T" + count + " = " + arraySize.pop());
+            values.push("T" + count);
+            count++;
+        }
+//        commands.add("AFTER IF: " + arraySize.empty());
+        while(!arraySize.empty()){
+            commands.add("T" + count + " = " + arraySize.pop());
+            values.push("T" + count);
+            count++;
+            commands.add("T" + count + " = " + values.pop() + " * " + values.pop());
+            values.push("T" + count);
+            count++;
+        } //expect a value to be in the stack and it will be taken care of by creator
+    }
+
+    @Override public void exitCreator(SHJavaParser.CreatorContext ctx) {
+        if(ctx.getChildCount() == 2 && (ctx.getChild(1) instanceof SHJavaParser.ArrayCreatorRestContext) && !values.empty()){
+            commands.add("T" + count + " = " + ctx.getChild(0).getText()+"["+values.pop()+"]");
+            values.push("T" + count);
+            count++;
+        }
     }
 
     @Override public void exitVariableAssignment(SHJavaParser.VariableAssignmentContext ctx) {
@@ -157,12 +198,25 @@ public class CustomParserListener extends SHJavaParserBaseListener {
     }
 
     @Override public void exitMethodDeclaration(SHJavaParser.MethodDeclarationContext ctx) {
+        String temp;
         if(ctx.getChildCount()==4 ){
             int i = commands.indexOf("TEMP METHOD NAME");
             commands.add("ENDFUNC");
             String str = "_"+ ctx.getChild(1).getText();
             commands.set(i, "TEMP." + str);
             funcNames.push(str);
+        }
+        if(ctx.getChildCount() == 4 ){
+            if (ctx.getChild(1).getText().equals("main")){
+                if(ctx.getParent().getParent().getParent().getParent() instanceof SHJavaParser.ClassDeclarationContext){
+                     temp = ctx.getParent().getParent().getParent().getParent().getChild(1).getText();
+                     if(ctx.getParent().getParent().getParent().getParent().getParent() instanceof SHJavaParser.TypeDeclarationContext &&
+                             ctx.getParent().getParent().getParent().getParent().getParent().getChildCount() == 2 &&
+                             ctx.getParent().getParent().getParent().getParent().getParent().getChild(0).getText().equals("pub")){
+                         fileName = temp;
+                     }
+                }
+            }
         }
     }
 

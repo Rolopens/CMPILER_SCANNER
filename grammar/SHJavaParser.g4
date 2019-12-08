@@ -568,25 +568,25 @@ invalidPrintStatmentExpression
 
 invalidExpressionForPrinting
 //    : primary
-        : expression bop='.'
-          ( IDENTIFIER
-          | methodCall
-          | THIS
-          | NEW nonWildcardTypeArguments? innerCreator
-          | SUPER superSuffix
-          )
-        | expression '[' expression ']'
+//        : expression bop='.'
+//          ( IDENTIFIER
+//          | methodCall
+//          | THIS
+//          | NEW nonWildcardTypeArguments? innerCreator
+//          | SUPER superSuffix
+//          )
+//        | expression '[' expression ']'
 //        | methodCall
-        | NEW creator
-        | '(' typeType ')' expression
+//        | NEW creator
+//        | '(' typeType ')' expression
 //        | expression bop=('+'|'-') expression
-        | expression postfix=('++' | '--')
+        : expression postfix=('++' | '--')
         | prefix=('+'|'-'|'++'|'--') expression
 //        | prefix=('~'|'!') expression
 //        | expression bop=('*'|'/'|'%') expression
 //        | expression bop=('<=' | '>=' | '>' | '<') expression
-        | expression bop=INSTANCEOF typeType
-        | expression bop=('==' | '!=') expression
+//        | expression bop=INSTANCEOF typeType
+//        | expression bop=('==' | '!=') expression
 //        | expression bop='&' expression
         | expression bop='^' expression
 //        | expression bop='|' expression

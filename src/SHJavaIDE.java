@@ -1,4 +1,5 @@
 
+import com.sun.xml.internal.ws.api.ha.StickyFeature;
 import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -200,6 +201,34 @@ public class SHJavaIDE extends JFrame{
 
     public void interpretCode() {
 //        thread.stop();
+        saveToFile();
+        try {
+            CharStream input = CharStreams.fromFileName(filepath);
+            converter.displayTokenClass(input);
+
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex){
+            ex.printStackTrace();
+        }
+
+        CharStream input = null;
+        try {
+            input = CharStreams.fromFileName(filepath);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        SHJava lexer = new SHJava(input);
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        SHJavaParser parser = new SHJavaParser(tokenStream);
+        parser.removeErrorListeners();
+        CustomParserListener listener = new CustomParserListener();
+        parser.addParseListener(listener);
+
+
+        ParseTree tree = parser.compilationUnit();
+
 
         errorsCP.clear();
         textArea2.setText("Interpreting....");
@@ -208,7 +237,7 @@ public class SHJavaIDE extends JFrame{
 
         Process pro;
         String s = textArea1.getText();
-        s = "import java.util.Scanner; \n\n" + s;
+        boolean pass = true;
 
         s = s.replaceAll("abs", "abstract");
         s = s.replaceAll("ass", "assert");
@@ -251,110 +280,73 @@ public class SHJavaIDE extends JFrame{
         s = s.replaceAll("inp\\(float\\)", "sc.nextFloat()");
         s = s.replaceAll("inp\\(String\\)", "sc.nextLine()");
         s = s.replaceAll("main\\(\\) \\{", "main(String[] args){\nScanner sc = new Scanner(System.in);\n");
+//        s = "import java.util.Scanner; \n\n" + s;
+//        System.out.println(listener.getFileName());
+        if(!(listener.getFileName() == null)){
+            if(!(listener.getFileName().equals("DemoFile2"))){
+                s = s.replaceAll("public class", "class");
+                s = "import java.util.Scanner; \n\n public class DemoFile2 { \n public static void main(String[] args) { \n" +
+                        listener.getFileName()+".main(new String[0]);\n }\n}" + s;
+            } else {
+                s = "import java.util.Scanner; \n\n" + s;
+            }
+        } else {
+            pass = false;
+            System.out.println("[ERROR] Lacking public class with main function");
+        }
 
-        try	{
-            File f = new File("./src/DemoFile2.java");
-            FileWriter fw = new FileWriter(f, false);
-            fw.write(s);
-            fw.close();
-
+        if(pass) {
             try {
-                Process p = Runtime.getRuntime().exec("javac ./src/DemoFile2.java");
+                File f = new File("./src/DemoFile2.java");
+                FileWriter fw = new FileWriter(f, false);
+                fw.write(s);
+                fw.close();
+
+                try {
+                    Process p = Runtime.getRuntime().exec("javac ./src/DemoFile2.java");
 //                Process p2 = Runtime.getRuntime().exec("java  -cp ./SHJava DemoFile2");
-//                reload();
 
-                BufferedReader stdError = new BufferedReader(new
-                        InputStreamReader(p.getErrorStream()));
-                 String line = null;
-//                System.out.println("SAVE MY SOUL 22");
-                while ((line = stdError.readLine()) != null) {
-                    errorsCP.add(line + "\n");
-                }
-//                BufferedReader in = new BufferedReader(
-//                        new InputStreamReader(p2.getInputStream()));
-//                BufferedReader stdError = new BufferedReader(new
-//                        InputStreamReader(p.getErrorStream()));
-//                try {
-//                    p2.getOutputStream().write("5".getBytes());
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                Thread thread = new Thread(){
-//                    public void run(){
-//                        String line = null;
-//                        while (true) {
-//                            try {
-//                                if (!((line = in.readLine()) != null)) break;
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//
-////                            System.out.println("SAVE MY SOUL");
-//                            System.out.println(line);
-//                            textArea3.append(line + "\n");
-//                        }
-//
-//                    }
-//                };
-//
-//                thread.start();
-//                String line = null;
-//                line = null;
-////                System.out.println("SAVE MY SOUL 22");
-//                while ((line = stdError.readLine()) != null) {
-//                    errorsCP.add(line + "\n");
-//                }
-                for (int i = 0; i < errorsCP.size();i++){
-                    System.out.println(errorsCP.get(i));
-                }
-////                System.out.println("SAVE MY SOUL 23");
+                    BufferedReader stdError = new BufferedReader(new
+                            InputStreamReader(p.getErrorStream()));
+                    String line = null;
+                    while ((line = stdError.readLine()) != null) {
+                        errorsCP.add(line + "\n");
+                    }
+                    for (int i = 0; i < errorsCP.size(); i++) {
+                        System.out.println(errorsCP.get(i));
+                    }
 
-            }catch (Exception ex) {
-                System.out.println("Exception Caught : " +ex.getMessage());
+                } catch (Exception ex) {
+                    System.out.println("Exception Caught : " + ex.getMessage());
+                }
+            } catch (IOException ioe) {
+                System.out.println("Exception Caught : " + ioe.getMessage());
             }
         }
-        catch(IOException ioe) {
-            System.out.println("Exception Caught : " +ioe.getMessage());
-        }
-    }
-
-
-    public void reload(){
-
-            Class<?> myClass=DemoFile2.class;
-            System.out.printf("my class is Class@%x%n", myClass.hashCode());
-            System.out.println("reloading");
-            URL[] urls={ myClass.getProtectionDomain().getCodeSource().getLocation() };
-            ClassLoader delegateParent = myClass.getClassLoader().getParent();
-            try(URLClassLoader cl=new URLClassLoader(urls, delegateParent)) {
-                Class<?> reloaded=cl.loadClass(myClass.getName());
-                System.out.printf("reloaded my class: Class@%x%n", reloaded.hashCode());
-                System.out.println("Different classes: "+(myClass!=reloaded));
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-
-
     }
 
 
     public void executeCode(){
-
-
         textArea2.setText("PROGRAM OUTPUT: \n-------------------------------- \n");
         thread = new Thread(){
             public void run(){
-
-
-                DemoFile2.main(new String[0]);
-//                        System.out.println("TEST");
-//                        System.out.println(textareatemp.getText());
-//                        if(!textareatemp.getText().equals(""));
-//                            System.out.println("Runtime Error");
-                System.out.println("\nPROGRAM FINISHED");
+                try {
+                    DemoFile2.main(new String[0]);
+                    System.out.println("\nProgram finished running");
+                } catch (Exception e){
+                    String str = "\n[RUNTIME ERROR] ";
+                    if(e.toString().contains("InputMismatchException"))
+                        str = str + "Wrong Input: Program finished prematurely";
+                    else if (e.toString().contains("/ by zero"))
+                        str = str + "Arithmetic Error: Cannot Divide by Zero";
+                    else if (e.toString().contains("ArrayIndexOutOfBounds"))
+                        str = str + "Indexing Error: Array Index Out of Bounds";
+                    else if (e.toString().contains("NullPointer"))
+                        str = str + "Referencing Error: Accessing a Null Values";
+//                    System.out.println("\nRUNTIME ERROR: PROGRAM PREMATURELY FINISHED");
+                    System.out.println(str);
+//                    System.out.println(e);
+                }
             }
         };
 
