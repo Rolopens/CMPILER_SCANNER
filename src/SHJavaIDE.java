@@ -43,9 +43,7 @@ public class SHJavaIDE extends JFrame{
         this.textArea2.setForeground(Color.WHITE);
         this.textArea3.setForeground(Color.WHITE);
         PrintStream out = new PrintStream( new OutputTextArea( textArea2 ) );
-        textareatemp = new JTextArea();
-        PrintStream temp = new PrintStream( new OutputTextArea( textareatemp ) );
-        textareatemp.setText("");
+        PrintStream temp = new PrintStream( new OutputTextArea( textArea3 ) );
         System.setOut( out );
         System.setErr( out );
 
@@ -70,6 +68,7 @@ public class SHJavaIDE extends JFrame{
         parseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                textArea2.setText("");
                 textArea3.setText("");
                 saveToFile();
                 try {
@@ -118,7 +117,7 @@ public class SHJavaIDE extends JFrame{
         intermediateCodeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                textArea2.setText("");
                 textArea3.setText("");
                 saveToFile();
 
@@ -160,6 +159,7 @@ public class SHJavaIDE extends JFrame{
         runButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                textArea2.setText("");
                 interpretCode();
                 interpretCode();
                 executeButton.setEnabled(true);
@@ -168,6 +168,7 @@ public class SHJavaIDE extends JFrame{
         executeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                textArea2.setText("");
                 executeCode();
                 executeButton.setEnabled(false);
             }
@@ -189,7 +190,6 @@ public class SHJavaIDE extends JFrame{
 
 
     public void interpretCode() {
-//        thread.stop();
         saveToFile();
         try {
             CharStream input = CharStreams.fromFileName(filepath);
@@ -316,7 +316,11 @@ public class SHJavaIDE extends JFrame{
 
 
     public void executeCode(){
-        textArea2.setText("PROGRAM OUTPUT: \n-------------------------------- \n");
+        PrintStream out = new PrintStream( new OutputTextArea( textArea2 ) );
+        PrintStream temp = new PrintStream( new OutputTextArea( textArea3 ) );
+        System.setOut(temp);
+        System.setErr(temp);
+        textArea3.setText("PROGRAM OUTPUT: \n-------------------------------- \n");
         thread = new Thread(){
             public void run(){
                 try {
@@ -336,6 +340,8 @@ public class SHJavaIDE extends JFrame{
                     System.out.println(str);
 //                    System.out.println(e);
                 }
+                System.setOut(out);
+                System.setErr(out);
             }
         };
 
