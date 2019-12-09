@@ -1,6 +1,7 @@
 public class Variable {
 
     private boolean constant = false;
+    private boolean isAbstract = false;
     private String acc = ""; //public or private
     private String name = "";
     private String type = "";
@@ -29,6 +30,14 @@ public class Variable {
 
     public Variable(){
 
+    }
+
+    public boolean getIsAbstract(){
+        return isAbstract;
+    }
+
+    public void setAbstract(boolean abs){
+        this.isAbstract = abs;
     }
 
     public String getAcc() {
