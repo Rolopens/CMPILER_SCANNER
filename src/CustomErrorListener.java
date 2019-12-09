@@ -1095,7 +1095,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
     @Override public void exitArguments(SHJavaParser.ArgumentsContext ctx) { }
 
     @Override public void exitScanStatement(SHJavaParser.ScanStatementContext ctx) { }
-
+//&& (doesFunctionExist(ctx.getChild(2).getText()))
     @Override public void exitPrintStatement(SHJavaParser.PrintStatementContext ctx) {
         System.out.println(ctx.getChild(2).getText());
 
@@ -1103,9 +1103,11 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                 null)){
             errors.add(checkIfVarExistsAndReturn(ctx.getChild(2).getText()).getValue());
         }else if(!ctx.getChild(2).getText().contains("\"") && (checkIfVarExistsAndReturn(ctx.getChild(2)
-                .getText()) == null)){
-            errors.add(ctx.getStart().getLine() + ": cannot print " + ctx.getChild(2).getText() + " because " +
-                    " variable does not exist");
+                .getText()) == null) && !(doesFunctionExist(ctx.getChild(2).getChild(0).getChild(0).getText()))){
+            errors.add("String " + ctx.getChild(2).getChild(0).getChild(0).getText());
+            errors.add("ArrayList " + functions.size());
+            errors.add(ctx.getStart().getLine() + ": cannot resolve " + ctx.getChild(2).getText() + " because " +
+                    " symbol does not exist");
         }else if(ctx.getChild(2).getText().contains("+")){
             String[] splitArr = ctx.getChild(2).getText().split("\\+");
             boolean flag = true; //true if all vars exist
@@ -1162,5 +1164,14 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
             }
         }
         return null;
+    }
+
+    public boolean doesFunctionExist(String name){
+        for(int i = 0; i < functions.size(); i++){
+            if(name.equals(functions.get(i).getFuncName())){
+                return true;
+            }
+        }
+        return false;
     }
 }
