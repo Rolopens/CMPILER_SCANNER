@@ -266,7 +266,7 @@ statement
     | whileStatement
     | doWhileStatement
     | SWITCH parExpression '{' switchBlockStatementGroup* switchLabel* '}'
-    | RETURN expression? ';'
+    | returnStatemet ';'
     | BREAK IDENTIFIER? ';'
     | SEMI
     | primaryError
@@ -277,6 +277,10 @@ statement
     | invalidPrintStatmentLackingQuotations ';'
     | printStatement ';'
     | scanStatement ';'
+    ;
+
+returnStatemet
+    : RETURN expression?
     ;
 
 ifStatement

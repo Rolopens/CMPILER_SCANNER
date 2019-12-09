@@ -659,26 +659,32 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
     @Override public void exitMemberDeclaration(SHJavaParser.MemberDeclarationContext ctx) { }
 
     @Override public void exitMethodDeclaration(SHJavaParser.MethodDeclarationContext ctx) {
-        if (ctx.getChildCount() == 4) {
-            SHJavaFunction temp = new SHJavaFunction();
-            temp.setRetType(ctx.getChild(0).getText());
-            if (ctx.getChild(2).getChildCount() == 3) {
-                if (ctx.getChild(2).getChild(1).getChildCount() % 2 == 1) {
-                    for (int i = 0; i < ctx.getChild(2).getChild(1).getChildCount(); i = i + 2) {
-                        temp.addParameter(new SHJavaParameter(ctx.getChild(2).getChild(1).getChild(i).getChild(0).getText(), ctx.getChild(2).getChild(1).getChild(i).getChild(1).getText()));
+        if(!doesFunctionExist(ctx.getChild(1).getText())){
+            if (ctx.getChildCount() == 4) {
+                SHJavaFunction temp = new SHJavaFunction();
+                temp.setRetType(ctx.getChild(0).getText());
+                if (ctx.getChild(2).getChildCount() == 3) {
+                    if (ctx.getChild(2).getChild(1).getChildCount() % 2 == 1) {
+                        for (int i = 0; i < ctx.getChild(2).getChild(1).getChildCount(); i = i + 2) {
+                            temp.addParameter(new SHJavaParameter(ctx.getChild(2).getChild(1).getChild(i).getChild(0).getText(), ctx.getChild(2).getChild(1).getChild(i).getChild(1).getText()));
+                        }
                     }
                 }
-            }
-            temp.setFuncName(ctx.getChild(1).getText());
-            if (ctx.getParent().getParent() instanceof SHJavaParser.ClassBodyDeclarationContext) {
-                for (int i = 0; i < ctx.getParent().getParent().getChildCount() - 1; i++) {
-                    temp.addModifier(ctx.getParent().getParent().getChild(i).getText());
+                temp.setFuncName(ctx.getChild(1).getText());
+                if (ctx.getParent().getParent() instanceof SHJavaParser.ClassBodyDeclarationContext) {
+                    for (int i = 0; i < ctx.getParent().getParent().getChildCount() - 1; i++) {
+                        temp.addModifier(ctx.getParent().getParent().getChild(i).getText());
+                    }
                 }
-            }
 //            System.out.println("Name: " + temp.getFuncName() + " Paramaters: " + temp.getParameters()
 //                    + " Return Type: " + temp.getRetType() + " Modifiers: " + temp.getModifiers().toString());
-            functions.add(temp);
+                functions.add(temp);
+            }
+        } else {
+            errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Function " +ctx.getChild(1).getText() +
+                    " already exists");
         }
+
     }
 
     @Override public void exitMethodBody(SHJavaParser.MethodBodyContext ctx) { }
@@ -701,8 +707,8 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                 }
             }
 
-            System.out.println("CONSTRUCTOR Name: " + temp.getFuncName() + " Paramaters: " + temp.getParameters()
-                    + " Return Type: " + temp.getRetType() + " Modifiers: " + temp.getModifiers().toString());
+//            System.out.println("CONSTRUCTOR Name: " + temp.getFuncName() + " Paramaters: " + temp.getParameters()
+//                    + " Return Type: " + temp.getRetType() + " Modifiers: " + temp.getModifiers().toString());
             functions.add(temp);
         }
     }
@@ -1032,11 +1038,6 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
 
     @Override public void exitLocalTypeDeclaration(SHJavaParser.LocalTypeDeclarationContext ctx) { }
 
-    @Override public void enterStatement(SHJavaParser.StatementContext ctx) {
-
-    }
-
-    @Override public void exitStatement(SHJavaParser.StatementContext ctx) { }
 
     @Override public void exitSwitchBlockStatementGroup(SHJavaParser.SwitchBlockStatementGroupContext ctx) { }
 
@@ -1095,7 +1096,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
     @Override public void exitArguments(SHJavaParser.ArgumentsContext ctx) { }
 
     @Override public void exitScanStatement(SHJavaParser.ScanStatementContext ctx) { }
-//&& (doesFunctionExist(ctx.getChild(2).getText()))
+
     @Override public void exitPrintStatement(SHJavaParser.PrintStatementContext ctx) {
         System.out.println(ctx.getChild(2).getText());
 
