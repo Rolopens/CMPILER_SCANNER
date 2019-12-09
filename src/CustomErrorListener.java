@@ -77,7 +77,15 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
         System.out.println("This is the variable name: " + ctx.getChild(0).getText());
         System.out.println("This is the value of the variable:" + ctx.getChild(2).getText());
 
-        if(!checkIfVarIsConstant(ctx.getChild(0).getText()) && !checkIfVarIsAbstract(ctx.getChild(0).getText())) {
+        if((ctx.getChild(2) instanceof SHJavaParser.ExpressionContext) &&
+                checkIfVarExistsAndReturn(ctx.getChild(0).getText()) != null &&
+                doesFunctionExist(ctx.getChild(2).getChild(0).getChild(0).getText())){
+            if(!(checkIfVarExistsAndReturn(ctx.getChild(0).getText()).getType()
+                    .equals(getFunction(ctx.getChild(2).getChild(0).getChild(0).getText()).getRetType()))){
+                errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : data type mismatch");
+            }
+
+        }else if(!checkIfVarIsConstant(ctx.getChild(0).getText()) && !checkIfVarIsAbstract(ctx.getChild(0).getText())) {
 
             int iTemp = 0; //temp int
             float fTemp = 0; //temp float
@@ -1174,5 +1182,14 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
             }
         }
         return false;
+    }
+
+    public SHJavaFunction getFunction(String name){
+        for(int i = 0; i < functions.size(); i++){
+            if(name.equals(functions.get(i).getFuncName())){
+                return functions.get(i);
+            }
+        }
+        return null;
     }
 }

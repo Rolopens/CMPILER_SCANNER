@@ -528,8 +528,7 @@ arguments
     ;
 
 scanStatement
-    : primitiveType IDENTIFIER '=' SCAN '('primitiveType')'
-    | IDENTIFIER '=' SCAN '('primitiveType')'
+    : IDENTIFIER '=' SCAN '('primitiveType')'
     ;
 
 //printStatement
