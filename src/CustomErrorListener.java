@@ -9,6 +9,8 @@ import static java.lang.Float.parseFloat;
 public class CustomErrorListener extends SHJavaParserBaseListener {
 
     private Stack<Variable> varStack = new Stack<>();
+    private ArrayList<SHJavaClass> classes = new ArrayList<>();
+    ArrayList<SHJavaFunction> functions = new ArrayList<>();
 
     ArrayList<SHJavaParser.LiteralContext> varExpressions = new ArrayList<>();
 
@@ -229,7 +231,40 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
 
     @Override public void exitVariableModifier(SHJavaParser.VariableModifierContext ctx) { }
 
-    @Override public void exitClassDeclaration(SHJavaParser.ClassDeclarationContext ctx) { }
+    @Override public void exitClassDeclaration(SHJavaParser.ClassDeclarationContext ctx) {
+        if (ctx.getChildCount() == 3){
+            SHJavaClass temp = new SHJavaClass();
+            ArrayList<SHJavaFunction> functions2 = new ArrayList<>();
+            ArrayList<Variable> vars = new ArrayList<>();
+            temp.setName(ctx.getChild(1).getText());
+            for (int i = 0; i < functions.size(); i++){
+                if(functions.get(i).getFuncName().equals(ctx.getChild(1).getText())){
+                    if(temp.getConstructor() != null){
+                        System.out.println("[ERROR] Multople constructor classes defined -" + ctx.getChild(1).getText());
+                    } else {
+                        temp.setConstructor(functions.get(i));
+                    }
+
+                } else {
+                    functions2.add(functions.get(i));
+                }
+            }
+            temp.setFunctions(functions2);
+            functions.clear();
+            if (ctx.getParent() instanceof SHJavaParser.TypeDeclarationContext) {
+                for (int i = 0; i < ctx.getParent().getChildCount() - 1; i++) {
+                    temp.addModifier(ctx.getParent().getChild(i).getText());
+                }
+            }
+            while(!varStack.empty()){
+                vars.add(varStack.pop());
+            }
+            temp.setClassVars(vars);
+//            System.out.println("Clas Name: " + temp.getName() + " Constructor: " + temp.getConstructor()
+//                    + " Functions: " + temp.getFunctions() + " Modifiers: " + temp.getModifiers().toString() + " Vars " + temp.getClassVars());
+            classes.add(temp);
+        }
+    }
 
     @Override public void exitTypeParameters(SHJavaParser.TypeParametersContext ctx) { }
 
@@ -623,7 +658,28 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
 
     @Override public void exitMemberDeclaration(SHJavaParser.MemberDeclarationContext ctx) { }
 
-    @Override public void exitMethodDeclaration(SHJavaParser.MethodDeclarationContext ctx) { }
+    @Override public void exitMethodDeclaration(SHJavaParser.MethodDeclarationContext ctx) {
+        if (ctx.getChildCount() == 4) {
+            SHJavaFunction temp = new SHJavaFunction();
+            temp.setRetType(ctx.getChild(0).getText());
+            if (ctx.getChild(2).getChildCount() == 3) {
+                if (ctx.getChild(2).getChild(1).getChildCount() % 2 == 1) {
+                    for (int i = 0; i < ctx.getChild(2).getChild(1).getChildCount(); i = i + 2) {
+                        temp.addParameter(new SHJavaParameter(ctx.getChild(2).getChild(1).getChild(i).getChild(0).getText(), ctx.getChild(2).getChild(1).getChild(i).getChild(1).getText()));
+                    }
+                }
+            }
+            temp.setFuncName(ctx.getChild(1).getText());
+            if (ctx.getParent().getParent() instanceof SHJavaParser.ClassBodyDeclarationContext) {
+                for (int i = 0; i < ctx.getParent().getParent().getChildCount() - 1; i++) {
+                    temp.addModifier(ctx.getParent().getParent().getChild(i).getText());
+                }
+            }
+//            System.out.println("Name: " + temp.getFuncName() + " Paramaters: " + temp.getParameters()
+//                    + " Return Type: " + temp.getRetType() + " Modifiers: " + temp.getModifiers().toString());
+            functions.add(temp);
+        }
+    }
 
     @Override public void exitMethodBody(SHJavaParser.MethodBodyContext ctx) { }
 
@@ -633,7 +689,23 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
 
     @Override public void exitGenericConstructorDeclaration(SHJavaParser.GenericConstructorDeclarationContext ctx) { }
 
-    @Override public void exitConstructorDeclaration(SHJavaParser.ConstructorDeclarationContext ctx) { }
+    @Override public void exitConstructorDeclaration(SHJavaParser.ConstructorDeclarationContext ctx) {
+        if(ctx.getChildCount() == 3){
+            SHJavaFunction temp = new SHJavaFunction();
+            temp.addModifier("pub");
+            temp.setFuncName(ctx.getChild(0).getText());
+            temp.setRetType(null);
+            if (ctx.getChild(1).getChildCount() == 3 && ctx.getChild(1).getChild(1).getChildCount() % 2 == 1) {
+                for (int i = 0; i < ctx.getChild(1).getChild(1).getChildCount(); i = i + 2) {
+                    temp.addParameter(new SHJavaParameter(ctx.getChild(1).getChild(1).getChild(i).getChild(0).getText(), ctx.getChild(1).getChild(1).getChild(i).getChild(1).getText()));
+                }
+            }
+
+            System.out.println("CONSTRUCTOR Name: " + temp.getFuncName() + " Paramaters: " + temp.getParameters()
+                    + " Return Type: " + temp.getRetType() + " Modifiers: " + temp.getModifiers().toString());
+            functions.add(temp);
+        }
+    }
 
     @Override public void enterFieldDeclaration(SHJavaParser.FieldDeclarationContext ctx) {
         varExpressions.clear();

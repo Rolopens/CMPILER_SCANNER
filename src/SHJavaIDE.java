@@ -95,7 +95,9 @@ public class SHJavaIDE extends JFrame{
                 parser.removeErrorListeners();
 //        parser.addErrorListener(CustomErrorListener.INSTANCE);
                 CustomErrorListener listener = new CustomErrorListener();
+                CustomErrorListener2 listener2 = new CustomErrorListener2();
                 parser.addParseListener(listener);
+//                parser.addParseListener(listener2);
 
 //                System.out.println("INTERMEDIATE CODE:");
                 ParseTree tree = parser.compilationUnit();
@@ -143,6 +145,7 @@ public class SHJavaIDE extends JFrame{
                 SHJavaParser parser = new SHJavaParser(tokenStream);
                 parser.removeErrorListeners();
                 CustomParserListener listener = new CustomParserListener();
+
                 parser.addParseListener(listener);
 
 
