@@ -8,6 +8,8 @@ import static java.lang.Float.parseFloat;
 
 public class CustomErrorListener extends SHJavaParserBaseListener {
 
+    private Stack<Variable> varStack = new Stack<>();
+
     ArrayList<SHJavaParser.LiteralContext> varExpressions = new ArrayList<>();
 
     ArrayList<String> errors = new ArrayList<>();
@@ -268,24 +270,28 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                                 ctx.getChild(1).getText().replaceAll("dec", "")
                                         .replaceAll(";", ""), "dec");
                         variables.add(variable);
+                        varStack.push(variable);
                     }
                     else if(ctx.getChild(1).getText().contains("flo")){
                         variable = new Variable(true, "pub",
                                 ctx.getChild(1).getText().replaceAll("flo", "")
                                         .replaceAll(";", ""), "flo");
                         variables.add(variable);
+                        varStack.push(variable);
                     }
                     else if(ctx.getChild(1).getText().contains("cha")){
                         variable = new Variable(true, "pub",
                                 ctx.getChild(1).getText().replaceAll("cha", "")
                                         .replaceAll(";", ""), "cha");
                         variables.add(variable);
+                        varStack.push(variable);
                     }
                     else if(ctx.getChild(1).getText().contains("str")){
                         variable = new Variable(true, "pub",
                                 ctx.getChild(1).getText().replaceAll("str", "")
                                         .replaceAll(";", ""), "str");
                         variables.add(variable);
+                        varStack.push(variable);
                     }
                 }else if(ctx.getChild(1).getText().equals("pub") || ctx.getChild(1).getText().equals("pri")){
                     if(ctx.getChild(2).getText().contains("dec")){
@@ -293,24 +299,28 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                                 ctx.getChild(2).getText().replaceAll("dec", "")
                                         .replaceAll(";", ""), "dec");
                         variables.add(variable);
+                        varStack.push(variable);
                     }
                     else if(ctx.getChild(1).getText().contains("flo")){
                         variable = new Variable(true, ctx.getChild(1).getText(),
                                 ctx.getChild(2).getText().replaceAll("flo", "")
                                         .replaceAll(";", ""), "flo");
                         variables.add(variable);
+                        varStack.push(variable);
                     }
                     else if(ctx.getChild(1).getText().contains("cha")){
                         variable = new Variable(true, ctx.getChild(1).getText(),
                                 ctx.getChild(2).getText().replaceAll("cha", "")
                                         .replaceAll(";", ""), "cha");
                         variables.add(variable);
+                        varStack.push(variable);
                     }
                     else if(ctx.getChild(1).getText().contains("str")){
                         variable = new Variable(true, ctx.getChild(1).getText(),
                                 ctx.getChild(2).getText().replaceAll("str", "")
                                         .replaceAll(";", ""), "str");
                         variables.add(variable);
+                        varStack.push(variable);
                     }
                 }
             }else if(ctx.getChild(0).getText().equals("fin")){
@@ -484,6 +494,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                     //change this to pub priv or whatever
                     variable = new Variable(acc, name, type);
                     variables.add(variable);
+                    varStack.push(variable);
                 } else if (keywords.contains(name)) {
                     errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Cannot use " + name +
                             " as variable name because it is a keyword");
@@ -518,6 +529,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                                             variables.get(j).getValue());
                                 }
                                 variables.add(variable);
+                                varStack.push(variable);
                             } else {
                                 errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : " + variables.get(j).getName()
                                         + " is of type " + variables.get(j).getType() + " which is " +
@@ -540,6 +552,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                                             value);
                                 }
                                 variables.add(variable);
+                                varStack.push(variable);
                             }
                         }else{
                             errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
@@ -562,6 +575,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                                 variable = new Variable(acc, newName, "flo",
                                         value);
                                 variables.add(variable);
+                                varStack.push(variable);
                             }else{
                                 errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
                                         value + " is not a floating point number");
@@ -581,6 +595,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                                 variable = new Variable(acc, newName, type, value);
                             }
                             variables.add(variable);
+                            varStack.push(variable);
                         } else if (type.equals("str") && !value.contains("\"")) {
                             errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : " + value
                                     + " is not a string");
@@ -593,6 +608,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                                 variable = new Variable(acc, newName, type, value);
                             }
                             variables.add(variable);
+                            varStack.push(variable);
                         } else if (type.equals("cha") && !value.contains("\'")) {
                             errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : " + value
                                     + " is not a character");
