@@ -15,6 +15,13 @@ public class Variable {
         this.value = value;
     }
 
+    public Variable(boolean isAbstract, String acc, String name, String type){
+        this.isAbstract = isAbstract;
+        this.acc = acc;
+        this.name = name;
+        this.type = type;
+    }
+
     public Variable(String acc, String name, String type, String value){
         this.acc = acc;
         this.name = name;

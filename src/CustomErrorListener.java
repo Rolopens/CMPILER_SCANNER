@@ -8,6 +8,8 @@ import static java.lang.Float.parseFloat;
 
 public class CustomErrorListener extends SHJavaParserBaseListener {
 
+    ArrayList<SHJavaParser.LiteralContext> varExpressions = new ArrayList<>();
+
     ArrayList<String> errors = new ArrayList<>();
 
     private ArrayList<String> list;
@@ -71,7 +73,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
         System.out.println("This is the variable name: " + ctx.getChild(0).getText());
         System.out.println("This is the value of the variable:" + ctx.getChild(2).getText());
 
-        if(!checkIfVarIsConstant(ctx.getChild(0).getText())) {
+        if(!checkIfVarIsConstant(ctx.getChild(0).getText()) && !checkIfVarIsAbstract(ctx.getChild(0).getText())) {
 
             int iTemp = 0; //temp int
             float fTemp = 0; //temp float
@@ -140,14 +142,18 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                 errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : " + ctx.getChild(0).getText() + " does" +
                         " not exist");
             }
-        }else{
+        }else if(checkIfVarIsConstant(ctx.getChild(0).getText())){
             errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : " + ctx.getChild(0).getText() + " is " +
                     "a constant");
+        }else if(checkIfVarIsAbstract(ctx.getChild(0).getText())){
+            errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : " + ctx.getChild(0).getText() + " is " +
+                    "abstract");
         }
 
         System.out.println("------ (Printing variables list) -------");
         for (int i = 0; i < variables.size(); i++) {
-            System.out.println(i + ": " + variables.get(i).isConstant() + ", " + variables.get(i).getAcc() + ", " + variables.get(i).getName() + ", "
+            System.out.println(i + ": " + variables.get(i).getIsAbstract()+ ", " + variables.get(i).isConstant()
+                    + ", " + variables.get(i).getAcc() + ", " + variables.get(i).getName() + ", "
                     + variables.get(i).getType() + ", " + variables.get(i).getValue());
         }
 
@@ -255,7 +261,59 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
         //automatically make vars/functions without a modifier to public
         //doing vars for now
         try {
-            if(ctx.getChild(0).getText().equals("fin")){
+            if(ctx.getChild(0).getText().equals("abs")){
+                if(!ctx.getChild(1).getText().equals("pub") && !ctx.getChild(1).getText().equals("pri")){
+                    if(ctx.getChild(1).getText().contains("dec")){
+                        variable = new Variable(true, "pub",
+                                ctx.getChild(1).getText().replaceAll("dec", "")
+                                        .replaceAll(";", ""), "dec");
+                        variables.add(variable);
+                    }
+                    else if(ctx.getChild(1).getText().contains("flo")){
+                        variable = new Variable(true, "pub",
+                                ctx.getChild(1).getText().replaceAll("flo", "")
+                                        .replaceAll(";", ""), "flo");
+                        variables.add(variable);
+                    }
+                    else if(ctx.getChild(1).getText().contains("cha")){
+                        variable = new Variable(true, "pub",
+                                ctx.getChild(1).getText().replaceAll("cha", "")
+                                        .replaceAll(";", ""), "cha");
+                        variables.add(variable);
+                    }
+                    else if(ctx.getChild(1).getText().contains("str")){
+                        variable = new Variable(true, "pub",
+                                ctx.getChild(1).getText().replaceAll("str", "")
+                                        .replaceAll(";", ""), "str");
+                        variables.add(variable);
+                    }
+                }else if(ctx.getChild(1).getText().equals("pub") || ctx.getChild(1).getText().equals("pri")){
+                    if(ctx.getChild(2).getText().contains("dec")){
+                        variable = new Variable(true, ctx.getChild(1).getText(),
+                                ctx.getChild(2).getText().replaceAll("dec", "")
+                                        .replaceAll(";", ""), "dec");
+                        variables.add(variable);
+                    }
+                    else if(ctx.getChild(1).getText().contains("flo")){
+                        variable = new Variable(true, ctx.getChild(1).getText(),
+                                ctx.getChild(2).getText().replaceAll("flo", "")
+                                        .replaceAll(";", ""), "flo");
+                        variables.add(variable);
+                    }
+                    else if(ctx.getChild(1).getText().contains("cha")){
+                        variable = new Variable(true, ctx.getChild(1).getText(),
+                                ctx.getChild(2).getText().replaceAll("cha", "")
+                                        .replaceAll(";", ""), "cha");
+                        variables.add(variable);
+                    }
+                    else if(ctx.getChild(1).getText().contains("str")){
+                        variable = new Variable(true, ctx.getChild(1).getText(),
+                                ctx.getChild(2).getText().replaceAll("str", "")
+                                        .replaceAll(";", ""), "str");
+                        variables.add(variable);
+                    }
+                }
+            }else if(ctx.getChild(0).getText().equals("fin")){
                 System.out.println("This is the variable fin: " +ctx.getChild(0).getText());
                 System.out.println("This is the variable acc: " +ctx.getChild(1).getText());
                 System.out.println("This is everything else: " +ctx.getChild(2).getText());
@@ -263,7 +321,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                 acc = ctx.getChild(1).getText();
                 fConstant = true;
 
-                if(!ctx.getChild(2).getText().contains("{")){
+                if(!(ctx.getChild(2).getChild(0) instanceof SHJavaParser.MethodDeclarationContext)){
                     vFlag = true;
 
                     System.out.println("in here: " + ctx.getChild(2).getText());
@@ -291,7 +349,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                 }else {
                     vFlag = false;
                 }
-            }else if(!ctx.getChild(1).getText().contains("{")) {
+            }else if(!(ctx.getChild(1).getChild(0) instanceof SHJavaParser.MethodDeclarationContext)) {
 
                 vFlag = true;
                 fConstant = false;
@@ -324,13 +382,14 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
         } catch (NullPointerException e) { //for when they dont have either pub or pri, we make it pub
 
             System.out.println("This is the variable fin: " +ctx.getChild(0).getText());
-            System.out.println("This is everything else: " +ctx.getChild(1).getText());
+//            System.out.println("This is everything else: " +ctx.getChild(1).getText());
 
             acc = "pub";
 
             if(ctx.getChild(0).getText().equals("fin")) {
                 fConstant = true;
-                if(!ctx.getChild(1).getText().contains("{")) {
+                System.out.println("yes yes yes" + (ctx.getChild(1).getChild(0) instanceof SHJavaParser.MethodDeclarationContext));
+                if(!(ctx.getChild(1).getChild(0) instanceof SHJavaParser.MethodDeclarationContext)) {
                     vFlag = true;
                     if (ctx.getChild(1).getText().contains("dec")) {
                         System.out.println("in the catch: " + ctx.getChild(1).getText().replaceAll("dec", "").replaceAll(";", ""));
@@ -355,7 +414,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                 }else{
                     vFlag = false;
                 }
-            }else if(!ctx.getChild(0).getText().contains("{")) {
+            }else if(!(ctx.getChild(0).getChild(0) instanceof SHJavaParser.MethodDeclarationContext)) {
                 fConstant = false;
                 vFlag = true;
                 if (ctx.getChild(0).getText().contains("dec")) {
@@ -388,6 +447,36 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
             System.out.println("This is the variable acc: " + acc);
             System.out.println("This is the variable type: " + type);
             System.out.println("This is the variable name: " + name);
+
+            boolean allInt = false;
+            boolean allFlo = false;
+            boolean allCha = false;
+            boolean allStr = false;
+
+            for(int i = 0; i < varExpressions.size(); i++){
+                System.out.println("oioioioi" + varExpressions.get(i).getText());
+                if(varExpressions.get(i).getChild(0) instanceof SHJavaParser.IntegerLiteralContext){
+                    allInt = true;
+                    allFlo = true;
+                    allCha = false;
+                    allStr = false;
+                }else if(varExpressions.get(i).getChild(0) instanceof SHJavaParser.FloatLiteralContext){
+                    allInt = false;
+                    allFlo = true;
+                    allCha = false;
+                    allStr = false;
+                }else if(varExpressions.get(i).getText().contains("\'") && varExpressions.get(i).getText().length() == 1){
+                    allInt = true;
+                    allFlo = false;
+                    allCha = true;
+                    allStr = false;
+                }else if(varExpressions.get(i).getText().contains("\"")){
+                    allInt = false;
+                    allFlo = false;
+                    allCha = false;
+                    allStr = true;
+                }
+            }
 
             if(!name.contains("=")) {
                 if (!keywords.contains(name) && (checkIfVarExistsAndReturn(name)
@@ -439,43 +528,53 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                     }
 
                     //for integer assignment
-                    try {
+//                    try {
                         if (type.equals("dec") && identifierFlag) {
-                            iTemp = parseInt(value);
-                            if(fConstant){
-                                variable = new Variable(true,acc, newName, "dec",
-                                        value);
-                            }else {
-                                variable = new Variable(acc, newName, "dec",
-                                        value);
+//                            iTemp = parseInt(value);
+                            if (allInt) {
+                                if (fConstant) {
+                                    variable = new Variable(true, acc, newName, "dec",
+                                            value);
+                                } else {
+                                    variable = new Variable(acc, newName, "dec",
+                                            value);
+                                }
+                                variables.add(variable);
                             }
-                            variables.add(variable);
+                        }else{
+                            errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
+                                    value + " is not an integer");
                         }
-                    } catch (Exception e) {
-                        errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
-                                value + " is not an integer");
-                    }
+//                    } catch (Exception e) {
+//                        errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
+//                                value + " is not an integer");
+//                    }
 
                     //for float assignment
-                    try {
+//                    try {
                         if (type.equals("flo") && identifierFlag) {
-                            fTemp = parseFloat(value);
-                            if(fConstant){
-                                variable = new Variable(true, acc, newName, "flo",
+//                            fTemp = parseFloat(value);
+                            if (allFlo) {
+                                if (fConstant) {
+                                    variable = new Variable(true, acc, newName, "flo",
+                                            value);
+                                }
+                                variable = new Variable(acc, newName, "flo",
                                         value);
+                                variables.add(variable);
+                            }else{
+                                errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
+                                        value + " is not a floating point number");
                             }
-                            variable = new Variable(acc, newName, "flo",
-                                    value);
-                            variables.add(variable);
                         }
-                    } catch (Exception e) {
-                        errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
-                                value + " is not a floating point number");
-                    }
+//                    } catch (Exception e) {
+//                        errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
+//                                value + " is not a floating point number");
+//                    }
 
                     //for string assignments
                     if (identifierFlag) {
-                        if (type.equals("str") && value.contains("\"")) {
+                        if (type.equals("str") && allStr) {
                             if(fConstant){
                                 variable = new Variable(true, acc, newName, type, value);
                             }else {
@@ -487,7 +586,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                                     + " is not a string");
                         }
                         //for character assignments
-                        else if (type.equals("cha") && value.contains("\'")) {
+                        else if (type.equals("cha") && allCha) {
                             if(fConstant) {
                                 variable = new Variable(true, acc, newName, type, value);
                             }else{
@@ -519,6 +618,10 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
     @Override public void exitGenericConstructorDeclaration(SHJavaParser.GenericConstructorDeclarationContext ctx) { }
 
     @Override public void exitConstructorDeclaration(SHJavaParser.ConstructorDeclarationContext ctx) { }
+
+    @Override public void enterFieldDeclaration(SHJavaParser.FieldDeclarationContext ctx) {
+        varExpressions.clear();
+    }
 
     @Override public void exitFieldDeclaration(SHJavaParser.FieldDeclarationContext ctx) {
 
@@ -580,7 +683,9 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
 
     @Override public void exitQualifiedName(SHJavaParser.QualifiedNameContext ctx) { }
 
-    @Override public void exitLiteral(SHJavaParser.LiteralContext ctx) { }
+    @Override public void exitLiteral(SHJavaParser.LiteralContext ctx) {
+        varExpressions.add(ctx);
+    }
 
     @Override public void exitIntegerLiteral(SHJavaParser.IntegerLiteralContext ctx) { }
 
@@ -590,14 +695,47 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
 
     @Override public void exitBlockStatement(SHJavaParser.BlockStatementContext ctx) { }
 
+    @Override public void enterLocalVariableDeclaration(SHJavaParser.LocalVariableDeclarationContext ctx) {
+        varExpressions.clear();
+    }
+
     @Override public void exitLocalVariableDeclaration(SHJavaParser.LocalVariableDeclarationContext ctx) {
+
+        boolean allInt = false;
+        boolean allFlo = false;
+        boolean allCha = false;
+        boolean allStr = false;
+
+        for(int i = 0; i < varExpressions.size(); i++){
+            if(varExpressions.get(i).getChild(0) instanceof SHJavaParser.IntegerLiteralContext){
+                allInt = true;
+                allFlo = true;
+                allCha = false;
+                allStr = false;
+            }else if(varExpressions.get(i).getChild(0) instanceof SHJavaParser.FloatLiteralContext){
+                allInt = false;
+                allFlo = true;
+                allCha = false;
+                allStr = false;
+            }else if(varExpressions.get(i).getText().contains("\'") && varExpressions.get(i).getText().length() == 1){
+                allInt = true;
+                allFlo = false;
+                allCha = true;
+                allStr = false;
+            }else if(varExpressions.get(i).getText().contains("\"")){
+                allInt = false;
+                allFlo = false;
+                allCha = false;
+                allStr = true;
+            }
+        }
 
         if(ctx.getChild(0).getText().equals("fin")){
             System.out.println("------ (Local Variable declaration) ------");
             System.out.println("This is the variable fin: " +ctx.getChild(0).getText());
             System.out.println("This is the variable type: " +ctx.getChild(1).getText());
             System.out.println("This is the variable name: " +ctx.getChild(2).getText().split("=")[0]);
-            System.out.println("This is the variable value: " +ctx.getChild(2).getText().split("=")[1]);
+//            System.out.println("This is the variable value: " +ctx.getChild(2).getText().split("=")[1]);
 
 
             if(!keywords.contains(ctx.getChild(2).getText().split("=")[0]) && (checkIfVarExistsAndReturn
@@ -629,34 +767,44 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                 }
 
                 //for integer assignment
-                try {
+//                try {
                     if (type.equals("dec") && identifierFlag) {
-                        iTemp = parseInt(value);
-                        variable = new Variable(true,"Local", name, "dec",
-                                value);
-                        variables.add(variable);
-                    }
-                } catch (Exception e) {
-                    errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
+//                        iTemp = parseInt(value);
+                        if(allInt) {
+                            variable = new Variable(true, "Local", name, "dec",
+                                    value);
+                            variables.add(variable);
+                        }else{
+                            errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
                             value + " is not an integer");
-                }
+                        }
+                    }
+//                } catch (Exception e) {
+//                    errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
+//                            value + " is not an integer");
+//                }
 
                 //for float assignment
-                try {
+//                try {
                     if (type.equals("flo") && identifierFlag) {
-                        fTemp = parseFloat(value);
-                        variable = new Variable(true,"Local", name, "flo",
-                                value);
-                        variables.add(variable);
-                    }
-                } catch (Exception e) {
-                    errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
+//                        fTemp = parseFloat(value);
+                        if(allFlo) {
+                            variable = new Variable(true, "Local", name, "flo",
+                                    value);
+                            variables.add(variable);
+                        }else{
+                            errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
                             value + " is not a floating point number");
-                }
+                        }
+                    }
+//                } catch (Exception e) {
+//                    errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
+//                            value + " is not a floating point number");
+//                }
 
                 //for string assignments
                 if (identifierFlag) {
-                    if (type.equals("str") && value.contains("\"")) {
+                    if (type.equals("str") && allStr) {
                         variable = new Variable(true,"Local", name, type, value);
                         variables.add(variable);
                     } else if (type.equals("str") && !value.contains("\"")) {
@@ -664,7 +812,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                                 + " is not a string");
                     }
                     //for character assignments
-                    else if (type.equals("cha") && value.contains("\'")) {
+                    else if (type.equals("cha") && allCha) {
                         variable = new Variable(true,"Local", name, type, value);
                         variables.add(variable);
                     } else if (type.equals("cha") && !value.contains("\'")) {
@@ -672,13 +820,13 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                                 + " is not a character");
                     }
                 }
-            }else if(keywords.contains(ctx.getChild(1).getText().split("=")[0])){
+            }else if(keywords.contains(ctx.getChild(2).getText().split("=")[0])){
                 errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Cannot use "
-                        +ctx.getChild(1).getText().split("=")[0] +
+                        +ctx.getChild(2).getText().split("=")[0] +
                         " as variable name because it is a keyword");
-            }else if(checkIfVarExistsAndReturn(ctx.getChild(1).getText().split("=")[0]) != null){
+            }else if(checkIfVarExistsAndReturn(ctx.getChild(2).getText().split("=")[0]) != null){
                 errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : Variable "
-                        +ctx.getChild(1).getText().split("=")[0] +
+                        +ctx.getChild(2).getText().split("=")[0] +
                         " already exists");
             }
 
@@ -728,34 +876,44 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                 }
 
                 //for integer assignment
-                try {
+//                try {
                     if (type.equals("dec") && identifierFlag) {
-                        iTemp = parseInt(value);
-                        variable = new Variable("Local", name, "dec",
-                                value);
-                        variables.add(variable);
+//                        iTemp = parseInt(value);
+                        if(allInt) {
+                            variable = new Variable("Local", name, "dec",
+                                    value);
+                            variables.add(variable);
+                        }else{
+                            errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
+                                    value + " is not an integer");
+                        }
                     }
-                } catch (Exception e) {
-                    errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
-                            value + " is not an integer");
-                }
+//                } catch (Exception e) {
+//                    errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
+//                            value + " is not an integer");
+//                }
 
                 //for float assignment
-                try {
+//                try {
                     if (type.equals("flo") && identifierFlag) {
-                        fTemp = parseFloat(value);
-                        variable = new Variable("Local", name, "flo",
-                                value);
-                        variables.add(variable);
+//                        fTemp = parseFloat(value);
+                        if(allFlo) {
+                            variable = new Variable("Local", name, "flo",
+                                    value);
+                            variables.add(variable);
+                        }else{
+                            errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
+                                    value + " is not a floating point number");
+                        }
                     }
-                } catch (Exception e) {
-                    errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
-                            value + " is not a floating point number");
-                }
+//                } catch (Exception e) {
+//                    errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " :" +
+//                            value + " is not a floating point number");
+//                }
 
                 //for string assignments
                 if (identifierFlag) {
-                    if (type.equals("str") && value.contains("\"")) {
+                    if (type.equals("str") && allStr) {
                         variable = new Variable("Local", name, type, value);
                         variables.add(variable);
                     } else if (type.equals("str") && !value.contains("\"")) {
@@ -763,7 +921,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                                 + " is not a string");
                     }
                     //for character assignments
-                    else if (type.equals("cha") && value.contains("\'")) {
+                    else if (type.equals("cha") && allCha) {
                         variable = new Variable("Local", name, type, value);
                         variables.add(variable);
                     } else if (type.equals("cha") && !value.contains("\'")) {
@@ -891,6 +1049,14 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
     @Override public void exitInvalidExpressionForPrinting(SHJavaParser.InvalidExpressionForPrintingContext ctx) { }
 
     @Override public void exitInvalidPrintStatmentLackingQuotations(SHJavaParser.InvalidPrintStatmentLackingQuotationsContext ctx) { }
+
+    public boolean checkIfVarIsAbstract(String name){
+        for(int i = 0; i < variables.size(); i++){
+            if(name.equals(variables.get(i).getName()) && variables.get(i).getIsAbstract())
+                return true;
+        }
+        return false;
+    }
 
     public boolean checkIfVarIsConstant(String name){
         for(int i = 0; i < variables.size(); i++){
