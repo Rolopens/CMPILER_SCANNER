@@ -1,4 +1,7 @@
+import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.w3c.dom.ls.LSOutput;
+
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -85,6 +88,10 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
                 errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : data type mismatch");
             }
 
+        }else if((ctx.getChild(2) instanceof SHJavaParser.ExpressionContext) &&
+                !doesFunctionExist(ctx.getChild(2).getChild(0).getChild(0).getText())) {
+            errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : function: " +
+                    ctx.getChild(2).getChild(0).getChild(0).getText() + " does not exist");
         }else if(!checkIfVarIsConstant(ctx.getChild(0).getText()) && !checkIfVarIsAbstract(ctx.getChild(0).getText())) {
 
             int iTemp = 0; //temp int
@@ -248,7 +255,7 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
             for (int i = 0; i < functions.size(); i++){
                 if(functions.get(i).getFuncName().equals(ctx.getChild(1).getText())){
                     if(temp.getConstructor() != null){
-                        System.out.println("[ERROR] Multople constructor classes defined -" + ctx.getChild(1).getText());
+                        System.out.println("[ERROR] Multiple constructor classes defined -" + ctx.getChild(1).getText());
                     } else {
                         temp.setConstructor(functions.get(i));
                     }
@@ -695,6 +702,26 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
 
     }
 
+    @Override public void exitReturnStatemet(SHJavaParser.ReturnStatemetContext ctx) {
+//        System.out.println("HGWBAJKJ" + (ctx.getParent().getParent().getParent().getParent().getParent() instanceof SHJavaParser.MethodDeclarationContext));
+    if(ctx.getParent().getParent().getParent().getParent().getParent() instanceof SHJavaParser.MethodDeclarationContext &&
+            ctx.getParent().getParent().getParent().getParent().getParent().getChildCount() == 4){
+
+        if(checkIfVarExistsAndReturn(ctx.getChild(1).getText()) != null &&
+                !(checkIfVarExistsAndReturn(ctx.getChild(1).getText()).getType().
+                        equals(ctx.getParent().getParent().getParent().getParent().getParent().getChild(0).getText()))) {
+            if (ctx.getParent().getParent().getParent().getParent().getParent().getChild(0).getText().equals("voi")) {
+                errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : cannot return since function is of type void");
+            } else {
+                errors.add("[ERROR] LINE " + ctx.getStart().getLine() + " : returning an incompatible data type, expecting "
+                        + ctx.getParent().getParent().getParent().getParent().getParent().getChild(0).getText());
+            }
+        }
+
+    }
+
+    }
+
     @Override public void exitMethodBody(SHJavaParser.MethodBodyContext ctx) { }
 
     @Override public void exitTypeTypeOrVoid(SHJavaParser.TypeTypeOrVoidContext ctx) { }
@@ -1113,10 +1140,10 @@ public class CustomErrorListener extends SHJavaParserBaseListener {
             errors.add(checkIfVarExistsAndReturn(ctx.getChild(2).getText()).getValue());
         }else if(!ctx.getChild(2).getText().contains("\"") && (checkIfVarExistsAndReturn(ctx.getChild(2)
                 .getText()) == null) && !(doesFunctionExist(ctx.getChild(2).getChild(0).getChild(0).getText()))){
-            errors.add("String " + ctx.getChild(2).getChild(0).getChild(0).getText());
-            errors.add("ArrayList " + functions.size());
-            errors.add(ctx.getStart().getLine() + ": cannot resolve " + ctx.getChild(2).getText() + " because " +
-                    " symbol does not exist");
+//            errors.add("String " + ctx.getChild(2).getChild(0).getChild(0).getText());
+//            errors.add("ArrayList " + functions.size());
+//            errors.add(ctx.getStart().getLine() + ": cannot resolve " + ctx.getChild(2).getText() + " because " +
+//                    " symbol does not exist");
         }else if(ctx.getChild(2).getText().contains("+")){
             String[] splitArr = ctx.getChild(2).getText().split("\\+");
             boolean flag = true; //true if all vars exist

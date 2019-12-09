@@ -307,6 +307,12 @@ public class SHJavaIDE extends JFrame{
                     for (int i = 0; i < errorsCP.size(); i++) {
                         System.out.println(errorsCP.get(i));
                     }
+                    if(errorsCP.size() > 0){
+                        File f2 = new File("./src/DemoFile2.java");
+                        FileWriter fw2 = new FileWriter(f, false);
+                        fw.write("");
+                        fw.close();
+                    }
 
                 } catch (Exception ex) {
                     System.out.println("Exception Caught : " + ex.getMessage());
